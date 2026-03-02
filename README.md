@@ -20,18 +20,6 @@ Whether you're a student cramming for exams or a professional upskilling on the 
 
 ---
 
-## ✨ Key Features
-
-| Feature | Description |
-|---|---|
-| 🤖 AI Chat Tutor | Ask any question and get step-by-step explanations powered by GPT-4 |
-| 📝 Mock Test Generator | Auto-generates custom quizzes by subject, topic & difficulty level |
-| 📊 Progress Tracker | Visual mastery charts showing your performance per subject |
-| 🧠 Recommendation Engine | Suggests next topics to study based on your weak areas |
-| 🏆 Rewards & Streaks | Badges, XP points & daily streaks to keep you motivated |
-
----
-
 ## 🏗️ Architecture
 
 The system is built in 5 layers:
@@ -48,9 +36,21 @@ The system is built in 5 layers:
 [ Data Store ]          ← Firebase / MongoDB
 ```
 
-![SmartTutor AI Architecture](./architecture-diagram.png)
-   
-   > 💡 For the full interactive version, see [`architecture-diagram.html`](./architecture-diagram.html)
+<img src="architecture-diagram.png" alt="SmartTutor AI Architecture" width="100%"/>
+
+> 💡 For the full interactive version, see [`architecture-diagram.html`](./architecture-diagram.html)
+
+---
+
+## ✨ Key Features
+
+| Feature | Description |
+|---|---|
+| 🤖 AI Chat Tutor | Ask any question and get step-by-step explanations powered by GPT-4 |
+| 📝 Mock Test Generator | Auto-generates custom quizzes by subject, topic & difficulty level |
+| 📊 Progress Tracker | Visual mastery charts showing your performance per subject |
+| 🧠 Recommendation Engine | Suggests next topics to study based on your weak areas |
+| 🏆 Rewards & Streaks | Badges, XP points & daily streaks to keep you motivated |
 
 ---
 
@@ -99,7 +99,7 @@ npm run dev
 
 **Team Name:** codex-darshan
 **Hackathon:** BWT Hackathon 2026
-**Theme:** AI Productivity Tools
+**Theme:** AI Super Productivity Tools
 
 ---
 
@@ -108,6 +108,7 @@ npm run dev
 ```
 BWT_codex-darshan-/
 ├── architecture-diagram.html   # Interactive system architecture diagram
+├── architecture-diagram.png    # Architecture diagram image
 ├── README.md                   # Project overview (you are here)
 ├── src/
 │   ├── components/             # React UI components
@@ -126,4 +127,3 @@ BWT_codex-darshan-/
 3. Clicks **"Generate Mock Test"** → receives 5 custom questions
 4. Submits answers → gets instant score + feedback
 5. **Progress chart updates** → badge awarded if milestone reached
-
