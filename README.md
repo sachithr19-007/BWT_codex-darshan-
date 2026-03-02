@@ -48,7 +48,9 @@ The system is built in 5 layers:
 [ Data Store ]          ← Firebase / MongoDB
 ```
 
-For the full interactive architecture diagram, see 👉 [`architecture-diagram.html`](./architecture-diagram.html)
+![SmartTutor AI Architecture](./architecture-diagram.png)
+   
+   > 💡 For the full interactive version, see [`architecture-diagram.html`](./architecture-diagram.html)
 
 ---
 
@@ -97,7 +99,7 @@ npm run dev
 
 **Team Name:** codex-darshan
 **Hackathon:** BWT Hackathon 2026
-**Theme:** AI Super Productivity Tools
+**Theme:** AI Productivity Tools
 
 ---
 
@@ -125,6 +127,3 @@ BWT_codex-darshan-/
 4. Submits answers → gets instant score + feedback
 5. **Progress chart updates** → badge awarded if milestone reached
 
----
-
-*Built with ❤️ by Team codex-darshan · BWT Hackathon 2026*
