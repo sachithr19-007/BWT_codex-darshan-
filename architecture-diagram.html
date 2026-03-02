@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartTutor AI – Solution Diagram</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --border: rgba(255,255,255,0.07);
+    --accent1: #00f5c4;
+    --accent2: #6366f1;
+    --accent3: #f59e0b;
+    --accent4: #ec4899;
+    --text: #f0f4ff;
+    --muted: #8892a4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 40px 20px;
+    overflow-x: hidden;
+  }
+
+  /* Subtle grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+
+  .header .badge {
+    display: inline-block;
+    background: rgba(0,245,196,0.1);
+    border: 1px solid rgba(0,245,196,0.3);
+    color: var(--accent1);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .header h1 span {
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header p {
+    color: var(--muted);
+    margin-top: 12px;
+    font-size: 15px;
+  }
+
+  /* ── LAYERS ── */
+  .diagram {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .layer {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 28px;
+    position: relative;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .layer:nth-child(1) { animation-delay: 0.05s; }
+  .layer:nth-child(2) { animation-delay: 0.15s; }
+  .layer:nth-child(3) { animation-delay: 0.25s; }
+  .layer:nth-child(4) { animation-delay: 0.35s; }
+  .layer:nth-child(5) { animation-delay: 0.45s; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .layer-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .layer-label::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .layer.user .layer-label { color: var(--accent1); }
+  .layer.user .layer-label::before { background: var(--accent1); box-shadow: 0 0 8px var(--accent1); }
+
+  .layer.frontend .layer-label { color: var(--accent2); }
+  .layer.frontend .layer-label::before { background: var(--accent2); box-shadow: 0 0 8px var(--accent2); }
+
+  .layer.ai .layer-label { color: var(--accent3); }
+  .layer.ai .layer-label::before { background: var(--accent3); box-shadow: 0 0 8px var(--accent3); }
+
+  .layer.backend .layer-label { color: var(--accent4); }
+  .layer.backend .layer-label::before { background: var(--accent4); box-shadow: 0 0 8px var(--accent4); }
+
+  .layer.data .layer-label { color: #60a5fa; }
+  .layer.data .layer-label::before { background: #60a5fa; box-shadow: 0 0 8px #60a5fa; }
+
+  /* accent left border */
+  .layer.user    { border-left: 3px solid var(--accent1); }
+  .layer.frontend{ border-left: 3px solid var(--accent2); }
+  .layer.ai      { border-left: 3px solid var(--accent3); }
+  .layer.backend { border-left: 3px solid var(--accent4); }
+  .layer.data    { border-left: 3px solid #60a5fa; }
+
+  .cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 12px 16px;
+    flex: 1 1 160px;
+    min-width: 140px;
+    transition: transform 0.2s, border-color 0.2s;
+    cursor: default;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255,255,255,0.18);
+  }
+
+  .card .icon {
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+
+  .card .title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+
+  .card .desc {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* arrows between layers */
+  .arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 0;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .arrow::before, .arrow::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  }
+
+  .arrow svg {
+    flex-shrink: 0;
+    opacity: 0.5;
+  }
+
+  /* data flow legend */
+  .legend {
+    margin-top: 36px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .footer-note {
+    text-align: center;
+    margin-top: 28px;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="header">
+    <div class="badge">Solution Architecture</div>
+    <h1>SmartTutor <span>AI</span></h1>
+    <p>Proposed System Diagram — AI Super Productivity Tools Hackathon</p>
+  </div>
+
+  <div class="diagram">
+
+    <!-- USER LAYER -->
+    <div class="layer user">
+      <div class="layer-label">Layer 1 — User</div>
+      <div class="cards">
+        <div class="card">
+          <div class="icon">🎓</div>
+          <div class="title">Student</div>
+          <div class="desc">Exam prep, topic revision, quiz practice</div>
+        </div>
+        <div class="card">
+          <div class="icon">💼</div>
+          <div class="title">Professional</div>
+          <div class="desc">Upskilling, certification prep, knowledge gaps</div>
+        </div>
+        <div class="card">
+          <div class="icon">🌐</div>
+          <div class="title">Access Points</div>
+          <div class="desc">Web browser (desktop & mobile)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v8M3 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      HTTP Requests / User Interactions
+    </div>
+
+    <!-- FRONTEND LAYER -->
+    <div class="layer frontend">
+      <div class="layer-label">Layer 2 — Frontend Dashboard (React + Tailwind)</div>
+      <div class="cards">
+        <div class="card">
+          <div class="icon">📊</div>
+          <div class="title">Progress Dashboard</div>
+          <div class="desc">Radar & bar charts showing mastery per subject</div>
+        </div>
+        <div class="card">
+          <div class="icon">💬</div>
+          <div class="title">AI Chat Window</div>
+          <div class="desc">Ask questions, get step-by-step explanations</div>
+        </div>
+        <div class="card">
+          <div class="icon">📝</div>
+          <div class="title">Mock Test UI</div>
+          <div class="desc">Dynamic quiz modal with instant feedback</div>
+        </div>
+        <div class="card">
+          <div class="icon">🏆</div>
+          <div class="title">Rewards Panel</div>
+          <div class="desc">Streaks, badges, XP points & achievements</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v8M3 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      API Calls (REST)
+    </div>
+
+    <!-- AI LAYER -->
+    <div class="layer ai">
+      <div class="layer-label">Layer 3 — AI / Logic Engine (OpenAI GPT-4 API)</div>
+      <div class="cards">
+        <div class="card">
+          <div class="icon">🤖</div>
+          <div class="title">Chat Tutor</div>
+          <div class="desc">Answers questions with reasoning & explanations</div>
+        </div>
+        <div class="card">
+          <div class="icon">⚡</div>
+          <div class="title">Mock Test Generator</div>
+          <div class="desc">Auto-generates Q&A by topic + difficulty level</div>
+        </div>
+        <div class="card">
+          <div class="icon">🧠</div>
+          <div class="title">Recommendation Engine</div>
+          <div class="desc">Suggests next topics based on weak areas</div>
+        </div>
+        <div class="card">
+          <div class="icon">📈</div>
+          <div class="title">Progress Analyzer</div>
+          <div class="desc">Calculates mastery %, assigns XP & badges</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v8M3 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Read / Write Data
+    </div>
+
+    <!-- BACKEND LAYER -->
+    <div class="layer backend">
+      <div class="layer-label">Layer 4 — Backend (Node.js / FastAPI)</div>
+      <div class="cards">
+        <div class="card">
+          <div class="icon">🔌</div>
+          <div class="title">REST APIs</div>
+          <div class="desc">Get/update progress, fetch topics, record results</div>
+        </div>
+        <div class="card">
+          <div class="icon">🔐</div>
+          <div class="title">Auth Service</div>
+          <div class="desc">User login, session management</div>
+        </div>
+        <div class="card">
+          <div class="icon">🔄</div>
+          <div class="title">OpenAI Proxy</div>
+          <div class="desc">Secure API key handling, prompt templating</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v8M3 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Queries / Writes
+    </div>
+
+    <!-- DATA LAYER -->
+    <div class="layer data">
+      <div class="layer-label">Layer 5 — Data Store (Firebase / MongoDB)</div>
+      <div class="cards">
+        <div class="card">
+          <div class="icon">👤</div>
+          <div class="title">User Profiles</div>
+          <div class="desc">Name, subjects, preferences, level</div>
+        </div>
+        <div class="card">
+          <div class="icon">📚</div>
+          <div class="title">Subject & Topics</div>
+          <div class="desc">Curriculum data, mastery scores</div>
+        </div>
+        <div class="card">
+          <div class="icon">🗂️</div>
+          <div class="title">Test Results</div>
+          <div class="desc">Questions answered, scores, history</div>
+        </div>
+        <div class="card">
+          <div class="icon">🎖️</div>
+          <div class="title">Rewards Data</div>
+          <div class="desc">Badges earned, XP points, streaks</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent1)"></div> User Layer</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent2)"></div> Frontend</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent3)"></div> AI / Logic</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent4)"></div> Backend</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div> Data Store</div>
+  </div>
+
+  <div class="footer-note">SmartTutor AI · AI Super Productivity Tools · Hackathon 2026</div>
+
+</div>
+</body>
+</html>
