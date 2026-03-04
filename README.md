@@ -1,7 +1,7 @@
-# 🎓 SmartTutor AI
+# 🎓 Enginex AI
 
 > **An AI-powered personalized learning dashboard for students & professionals**
-> 
+>
 > 🏆 Hackathon 2026 · Theme: **AI Super Productivity Tools**
 
 ---
@@ -14,9 +14,9 @@ In today's fast-paced world, both students and working professionals struggle to
 
 ## 💡 Solution Overview
 
-**SmartTutor AI** is an intelligent learning dashboard that acts as your personal AI tutor — generating custom mock tests, answering your questions with step-by-step reasoning, tracking your subject mastery in real time, and keeping you motivated with streaks and rewards.
+**Enginex AI** is an intelligent learning dashboard that acts as your personal AI tutor — generating custom mock tests, answering your questions with step-by-step reasoning, tracking your subject mastery in real time, and keeping you motivated with streaks and rewards.
 
-Whether you're a student cramming for exams or a professional upskilling on the go, SmartTutor AI adapts to your pace and helps you learn smarter, not harder.
+Whether you're a student cramming for exams or a professional upskilling on the go, Enginex AI adapts to your pace and helps you learn smarter, not harder.
 
 ---
 
@@ -25,7 +25,7 @@ Whether you're a student cramming for exams or a professional upskilling on the 
 The system is built in 5 layers:
 
 ```
-[ User ] 
+[ User ]
     ↓  HTTP Requests
 [ Frontend Dashboard ]  ← React + Tailwind CSS
     ↓  REST API Calls
@@ -36,7 +36,7 @@ The system is built in 5 layers:
 [ Data Store ]          ← Firebase / MongoDB
 ```
 
-<img src="architecture-diagram.png" alt="SmartTutor AI Architecture" width="100%"/>
+<img src="architecture-diagram.png" alt="Enginex AI Architecture" width="100%"/>
 
 > 💡 For the full interactive version, see [`architecture-diagram.html`](./architecture-diagram.html)
 
@@ -44,34 +44,23 @@ The system is built in 5 layers:
 
 ## ✨ Key Features
 
-| Feature | Description |
-|---|---|
-| 🤖 AI Chat Tutor | Ask any question and get step-by-step explanations powered by GPT-4 |
-| 📝 Mock Test Generator | Auto-generates custom quizzes by subject, topic & difficulty level |
-| 📊 Progress Tracker | Visual mastery charts showing your performance per subject |
-| 🧠 Recommendation Engine | Suggests next topics to study based on your weak areas |
-| 🏆 Rewards & Streaks | Badges, XP points & daily streaks to keep you motivated |
-
----
-
-## 🛠️ Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Frontend | React, Tailwind CSS, Chart.js |
-| Backend | Node.js / FastAPI |
-| AI Engine | OpenAI GPT-4 API |
-| Database | Firebase / MongoDB |
-| Deployment | Vercel / Replit |
+| Feature                  | Description                                                         |
+| ------------------------ | ------------------------------------------------------------------- |
+| 🤖 AI Chat Tutor         | Ask any question and get step-by-step explanations powered by GPT-4 |
+| 📝 Mock Test Generator   | Auto-generates custom quizzes by subject, topic & difficulty level  |
+| 📊 Progress Tracker      | Visual mastery charts showing your performance per subject          |
+| 🧠 Recommendation Engine | Suggests next topics to study based on your weak areas              |
+| 🏆 Rewards & Streaks     | Badges, XP points & daily streaks to keep you motivated             |
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js v18+
-- OpenAI API Key
-- Firebase account (or MongoDB Atlas)
+
+* Node.js v18+
+* OpenAI API Key
+* Firebase account (or MongoDB Atlas)
 
 ### Installation
 
