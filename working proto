@@ -1,16 +1,1645 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <title>SmartTutor • AI Learning Dashboard</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EngineX — Engineering Learning Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080c10;
+  --surface: #0d1117;
+  --card: #161b22;
+  --card2: #1c2230;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --cyan: #00e5ff;
+  --green: #39ff90;
+  --orange: #ff7b35;
+  --purple: #bd93f9;
+  --pink: #ff6eb4;
+  --yellow: #f1fa8c;
+  --red: #ff5555;
+  --text: #e6edf3;
+  --muted: #484f58;
+  --muted2: #8b949e;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Manrope', sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* ── SCANLINES OVERLAY */
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,229,255,0.012) 2px,rgba(0,229,255,0.012) 4px);pointer-events:none;z-index:9998;}
+
+/* ── UTILITIES */
+.hidden{display:none!important;}
+.mono{font-family:var(--mono);}
+
+/* ══════════════════════════════════════════ AUTH */
+#authPage{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;position:relative;}
+.auth-bg{position:fixed;inset:0;z-index:0;
+  background:radial-gradient(ellipse 70% 60% at 10% 50%,rgba(0,229,255,.08) 0,transparent 60%),
+             radial-gradient(ellipse 50% 50% at 90% 20%,rgba(57,255,144,.06) 0,transparent 55%),
+             radial-gradient(ellipse 40% 40% at 50% 90%,rgba(189,147,249,.07) 0,transparent 55%);}
+.auth-grid{position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,229,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.03) 1px,transparent 1px);background-size:32px 32px;}
+
+.auth-wrap{position:relative;z-index:1;display:grid;grid-template-columns:1fr 420px;gap:80px;align-items:center;max-width:980px;width:100%;}
+
+.auth-hero{}
+.brand{display:inline-flex;align-items:center;gap:10px;margin-bottom:44px;}
+.brand-icon{width:42px;height:42px;background:var(--cyan);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:16px;color:var(--bg);}
+.brand-name{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--text);}
+.brand-name span{color:var(--cyan);}
+
+.auth-hero h1{font-size:clamp(2.2rem,4.5vw,3.4rem);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin-bottom:18px;}
+.auth-hero h1 .hl{background:linear-gradient(90deg,var(--cyan),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.auth-hero p{color:var(--muted2);font-size:14px;line-height:1.75;max-width:400px;margin-bottom:32px;}
+
+.lang-pills{display:flex;flex-wrap:wrap;gap:8px;}
+.lang-pill{padding:5px 12px;border-radius:6px;font-family:var(--mono);font-size:11px;font-weight:600;border:1px solid;cursor:default;}
+.lp-py{background:rgba(57,255,144,.08);border-color:rgba(57,255,144,.25);color:var(--green);}
+.lp-js{background:rgba(241,250,140,.08);border-color:rgba(241,250,140,.25);color:var(--yellow);}
+.lp-java{background:rgba(255,123,53,.08);border-color:rgba(255,123,53,.25);color:var(--orange);}
+.lp-cpp{background:rgba(0,229,255,.08);border-color:rgba(0,229,255,.25);color:var(--cyan);}
+.lp-ds{background:rgba(189,147,249,.08);border-color:rgba(189,147,249,.25);color:var(--purple);}
+.lp-db{background:rgba(255,110,180,.08);border-color:rgba(255,110,180,.25);color:var(--pink);}
+.lp-os{background:rgba(255,85,85,.08);border-color:rgba(255,85,85,.25);color:var(--red);}
+.lp-cn{background:rgba(0,229,255,.08);border-color:rgba(0,229,255,.2);color:#7dcfff;}
+
+.auth-card{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:32px;box-shadow:0 32px 80px rgba(0,0,0,.6);}
+.auth-card h2{font-size:20px;font-weight:700;letter-spacing:-.02em;margin-bottom:5px;}
+.auth-card .sub{color:var(--muted2);font-size:13px;margin-bottom:24px;}
+
+.tabs{display:flex;background:rgba(255,255,255,.04);border-radius:8px;padding:3px;margin-bottom:24px;gap:3px;}
+.tab-btn{flex:1;padding:8px;border:none;border-radius:6px;background:transparent;color:var(--muted2);font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+.tab-btn.active{background:var(--cyan);color:var(--bg);}
+
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted2);margin-bottom:7px;text-transform:uppercase;}
+.inp-wrap{position:relative;}
+.inp-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.5;}
+.form-group input,.form-group select{width:100%;padding:11px 12px 11px 38px;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:var(--sans);font-size:13.5px;outline:none;transition:border-color .2s,background .2s;-webkit-appearance:none;}
+.form-group input:focus,.form-group select:focus{border-color:var(--cyan);background:rgba(0,229,255,.04);}
+.form-group select option{background:var(--card);}
+
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+.err-msg{background:rgba(255,85,85,.1);border:1px solid rgba(255,85,85,.3);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:14px;display:none;}
+.ok-msg{background:rgba(57,255,144,.1);border:1px solid rgba(57,255,144,.3);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--green);margin-bottom:14px;display:none;}
+
+.btn-auth{width:100%;padding:13px;background:var(--cyan);border:none;border-radius:8px;color:var(--bg);font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;letter-spacing:-.01em;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 20px rgba(0,229,255,.25);}
+.btn-auth:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(0,229,255,.4);}
+
+.divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--muted);font-size:12px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border2);}
+
+.api-key-section{background:rgba(189,147,249,.06);border:1px solid rgba(189,147,249,.2);border-radius:10px;padding:14px;margin-top:16px;}
+.api-key-section p{font-size:12px;color:var(--muted2);margin-bottom:10px;line-height:1.5;}
+.api-key-section a{color:var(--purple);text-decoration:none;}
+.api-input{display:flex;gap:8px;}
+.api-input input{flex:1;padding:9px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(189,147,249,.25);border-radius:7px;color:var(--text);font-family:var(--mono);font-size:12px;outline:none;}
+.api-input input:focus{border-color:var(--purple);}
+.api-save-btn{padding:9px 14px;background:rgba(189,147,249,.15);border:1px solid rgba(189,147,249,.3);border-radius:7px;color:var(--purple);font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;}
+
+/* ══════════════════════════════════════════ APP */
+#appShell{display:flex;min-height:100vh;}
+
+.sidebar{width:232px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;}
+
+.sb-brand{padding:20px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);}
+.sb-logo{width:34px;height:34px;background:var(--cyan);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:14px;color:var(--bg);flex-shrink:0;}
+.sb-title{font-family:var(--mono);font-size:15px;font-weight:700;}
+.sb-title span{color:var(--cyan);}
+
+nav{padding:14px 10px;flex:1;overflow-y:auto;}
+nav::-webkit-scrollbar{width:3px;}
+nav::-webkit-scrollbar-thumb{background:var(--border2);}
+
+.nav-sec{margin-bottom:20px;}
+.nav-lbl{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.1em;color:var(--muted);padding:0 8px;margin-bottom:5px;text-transform:uppercase;}
+
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:500;color:var(--muted2);transition:all .15s;border:none;background:transparent;width:100%;text-align:left;font-family:var(--sans);}
+.nav-item:hover{background:rgba(255,255,255,.05);color:var(--text);}
+.nav-item.active{background:rgba(0,229,255,.08);color:var(--cyan);border:1px solid rgba(0,229,255,.15);}
+.nav-ico{font-size:15px;width:20px;text-align:center;}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;}
+.nav-badge.green{background:rgba(57,255,144,.2);color:var(--green);}
+
+.sb-user{padding:14px 18px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.sb-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--bg);flex-shrink:0;}
+.sb-uname{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-urole{font-family:var(--mono);font-size:10px;color:var(--muted2);}
+.sb-logout{background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;padding:4px;margin-left:auto;transition:color .2s;}
+.sb-logout:hover{color:var(--red);}
+
+.main{margin-left:232px;flex:1;padding:24px 28px;min-height:100vh;}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.pg-title{font-size:20px;font-weight:800;letter-spacing:-.02em;}
+.pg-title .pg-sub{font-size:12px;font-weight:400;color:var(--muted2);margin-top:1px;font-family:var(--mono);}
+
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.search-bar{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;width:190px;}
+.search-bar input{background:none;border:none;outline:none;color:var(--text);font-family:var(--sans);font-size:13px;width:100%;}
+.search-bar input::placeholder{color:var(--muted);}
+.ico-btn{width:36px;height:36px;background:var(--card);border:1px solid var(--border2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;transition:background .2s;position:relative;}
+.ico-btn:hover{background:rgba(255,255,255,.08);}
+.notif-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;background:var(--red);border-radius:50%;border:2px solid var(--bg);}
+
+/* ══════════════════════════════════════════ PANELS */
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* ── DASHBOARD */
+.welcome-bar{background:linear-gradient(135deg,rgba(0,229,255,.1) 0%,rgba(57,255,144,.05) 100%);border:1px solid rgba(0,229,255,.2);border-radius:14px;padding:22px 26px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden;}
+.welcome-bar::after{content:'</ engineer>';position:absolute;right:180px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:64px;font-weight:700;color:rgba(0,229,255,.04);white-space:nowrap;}
+.wb-text h2{font-size:18px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px;}
+.wb-text p{color:var(--muted2);font-size:13px;}
+.wb-streak{background:rgba(255,123,53,.1);border:1px solid rgba(255,123,53,.25);border-radius:10px;padding:12px 16px;text-align:center;flex-shrink:0;}
+.wb-streak .sf{font-size:22px;}
+.wb-streak .sc{font-size:22px;font-weight:800;color:var(--orange);}
+.wb-streak .sl{font-family:var(--mono);font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;}
+
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat-c{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;transition:transform .2s,border-color .2s;}
+.stat-c:hover{transform:translateY(-2px);border-color:var(--border2);}
+.sc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.sc-ico{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.sc-delta{font-family:var(--mono);font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;}
+.delta-up{background:rgba(57,255,144,.1);color:var(--green);}
+.delta-dn{background:rgba(255,85,85,.1);color:var(--red);}
+.sc-val{font-size:26px;font-weight:800;letter-spacing:-.02em;margin-bottom:2px;}
+.sc-lbl{font-size:12px;color:var(--muted2);}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+.sec-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;}
+
+.sec-hd{font-size:13px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.sec-act{font-family:var(--mono);font-size:11px;color:var(--cyan);cursor:pointer;background:none;border:none;font-family:var(--mono);}
+
+.subj-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.subj-ico{font-size:15px;width:26px;text-align:center;}
+.subj-info{flex:1;}
+.subj-nm{font-size:12px;font-weight:600;margin-bottom:3px;display:flex;align-items:center;justify-content:space-between;}
+.subj-nm span{font-family:var(--mono);font-size:11px;}
+.subj-bar{height:5px;border-radius:3px;background:rgba(255,255,255,.06);}
+.subj-fill{height:100%;border-radius:3px;transition:width 1s ease;}
+
+.act-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.act-item:last-child{border:none;}
+.act-dot{width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+.act-label{font-size:13px;font-weight:500;margin-bottom:2px;}
+.act-meta{font-family:var(--mono);font-size:10px;color:var(--muted);}
+.act-score{font-family:var(--mono);font-size:12px;font-weight:700;}
+
+/* ── AI TUTOR */
+.tutor-layout{display:grid;grid-template-columns:1fr 280px;gap:16px;height:calc(100vh - 130px);}
+.chat-main{background:var(--card);border:1px solid var(--border);border-radius:14px;display:flex;flex-direction:column;overflow:hidden;}
+.chat-hd{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+.ai-av{width:36px;height:36px;background:linear-gradient(135deg,var(--cyan),var(--purple));border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:13px;color:var(--bg);}
+.ai-stat{font-family:var(--mono);font-size:11px;color:var(--green);display:flex;align-items:center;gap:5px;}
+.ai-stat::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;}
+.model-badge{font-family:var(--mono);font-size:10px;padding:3px 9px;border-radius:5px;background:rgba(189,147,249,.1);border:1px solid rgba(189,147,249,.25);color:var(--purple);margin-left:auto;}
+
+.chat-msgs{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;}
+.chat-msgs::-webkit-scrollbar{width:3px;}
+.chat-msgs::-webkit-scrollbar-thumb{background:var(--border2);}
+
+.msg{max-width:82%;animation:msgSlide .3s ease;}
+@keyframes msgSlide{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.msg.user{align-self:flex-end;}
+.msg-lbl{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.08em;color:var(--muted);margin-bottom:5px;text-transform:uppercase;}
+.msg.user .msg-lbl{text-align:right;}
+.msg-bub{padding:11px 15px;border-radius:10px;font-size:13.5px;line-height:1.65;}
+.msg.ai .msg-bub{background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:3px 10px 10px 10px;}
+.msg.user .msg-bub{background:var(--cyan);color:var(--bg);font-weight:500;border-radius:10px 10px 3px 10px;}
+
+/* Code blocks in chat */
+.msg-bub pre{background:var(--bg);border:1px solid rgba(0,229,255,.15);border-radius:8px;padding:12px 14px;margin:10px 0;overflow-x:auto;}
+.msg-bub pre code{font-family:var(--mono);font-size:12px;line-height:1.6;color:var(--green);}
+.msg-bub .code-lang{font-family:var(--mono);font-size:10px;color:var(--cyan);background:rgba(0,229,255,.08);padding:2px 8px;border-radius:4px;margin-bottom:6px;display:inline-block;}
+.msg-bub strong{color:var(--cyan);}
+.msg-bub .key{color:var(--purple);}
+.msg-bub .val{color:var(--green);}
+
+.typing-dots span{display:inline-block;width:5px;height:5px;background:var(--cyan);border-radius:50%;margin:0 2px;animation:typeDot 1.2s infinite;}
+.typing-dots span:nth-child(2){animation-delay:.2s;}
+.typing-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes typeDot{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-6px);}}
+
+.chat-inp-area{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:9px;align-items:flex-end;}
+.chat-inp{flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:10px;padding:11px 14px;color:var(--text);font-family:var(--sans);font-size:13.5px;resize:none;outline:none;max-height:120px;line-height:1.5;transition:border-color .2s;}
+.chat-inp:focus{border-color:var(--cyan);}
+.send-btn{width:42px;height:42px;background:var(--cyan);border:none;border-radius:9px;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .15s,box-shadow .15s;color:var(--bg);}
+.send-btn:hover{transform:scale(1.05);box-shadow:0 4px 16px rgba(0,229,255,.4);}
+.send-btn:disabled{opacity:.3;cursor:not-allowed;transform:none;}
+
+.tutor-sb{display:flex;flex-direction:column;gap:14px;}
+.topic-grid{display:flex;flex-direction:column;gap:5px;}
+.topic-chip{padding:9px 12px;border-radius:7px;background:rgba(255,255,255,.03);border:1px solid var(--border);color:var(--text);font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;text-align:left;transition:all .15s;}
+.topic-chip:hover{background:rgba(0,229,255,.06);border-color:rgba(0,229,255,.25);color:var(--cyan);}
+.topic-chip .tc-lang{font-family:var(--mono);font-size:10px;color:var(--muted2);margin-right:5px;}
+
+/* ── QUIZ */
+.quiz-pick{max-width:640px;margin:0 auto;padding:20px 0;}
+.quiz-pick h2{font-size:26px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px;}
+.quiz-pick p{color:var(--muted2);font-size:13px;margin-bottom:28px;}
+.qsubj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;}
+.qsubj-card{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;transition:all .2s;text-align:center;}
+.qsubj-card:hover,.qsubj-card.sel{border-color:var(--cyan);}
+.qsubj-card.sel{background:rgba(0,229,255,.06);}
+.qsubj-card .qs-ico{font-size:26px;margin-bottom:7px;}
+.qsubj-card .qs-nm{font-size:13px;font-weight:700;margin-bottom:2px;}
+.qsubj-card .qs-cnt{font-family:var(--mono);font-size:10px;color:var(--muted2);}
+.diff-row{display:flex;gap:8px;justify-content:center;margin-bottom:28px;}
+.diff-btn{padding:7px 20px;border-radius:7px;border:1.5px solid;font-family:var(--mono);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;background:transparent;}
+.diff-btn.sel-e{border-color:var(--green);background:rgba(57,255,144,.1);color:var(--green);}
+.diff-btn.sel-m{border-color:var(--yellow);background:rgba(241,250,140,.1);color:var(--yellow);}
+.diff-btn.sel-h{border-color:var(--red);background:rgba(255,85,85,.1);color:var(--red);}
+.diff-btn:not([class*="sel-"]){border-color:var(--border2);color:var(--muted2);}
+.btn-startq{padding:13px 36px;background:var(--cyan);border:none;border-radius:9px;color:var(--bg);font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,229,255,.25);transition:transform .15s;}
+.btn-startq:hover{transform:translateY(-1px);}
+
+.quiz-active{max-width:680px;margin:0 auto;}
+.q-hdr{display:flex;align-items:center;gap:14px;margin-bottom:22px;}
+.q-prog-bar{flex:1;height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;}
+.q-prog-fill{height:100%;background:var(--cyan);border-radius:3px;transition:width .4s ease;}
+.q-timer-badge{font-family:var(--mono);font-size:13px;font-weight:700;padding:5px 13px;border-radius:7px;background:rgba(255,85,85,.1);border:1px solid rgba(255,85,85,.25);color:var(--red);}
+.q-box{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:28px;}
+.q-pills{display:flex;gap:8px;margin-bottom:16px;}
+.q-q{font-size:17px;font-weight:700;line-height:1.55;margin-bottom:24px;letter-spacing:-.01em;}
+.q-q code{font-family:var(--mono);background:rgba(0,229,255,.08);padding:1px 6px;border-radius:4px;font-size:14px;color:var(--cyan);}
+.q-opts{display:flex;flex-direction:column;gap:9px;}
+.q-opt{padding:13px 16px;border-radius:10px;border:1.5px solid var(--border2);background:rgba(255,255,255,.02);cursor:pointer;font-size:13.5px;font-weight:500;transition:all .15s;display:flex;align-items:center;gap:11px;}
+.q-opt:hover{border-color:var(--cyan);background:rgba(0,229,255,.04);}
+.q-opt.chosen{border-color:var(--purple);background:rgba(189,147,249,.08);}
+.q-opt.correct{border-color:var(--green)!important;background:rgba(57,255,144,.08)!important;}
+.q-opt.wrong{border-color:var(--red)!important;background:rgba(255,85,85,.07)!important;}
+.q-opt-ltr{width:26px;height:26px;border-radius:6px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;flex-shrink:0;}
+.q-opt code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px;font-size:12px;}
+.q-foot{display:flex;align-items:center;justify-content:space-between;margin-top:20px;}
+.q-fb{font-size:13px;}
+.btn-next{padding:10px 24px;background:var(--cyan);border:none;border-radius:8px;color:var(--bg);font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s;}
+.btn-next:disabled{opacity:.3;cursor:not-allowed;}
+
+.quiz-res{max-width:520px;margin:0 auto;text-align:center;padding:20px 0;}
+.res-ring{width:130px;height:130px;margin:0 auto 22px;border-radius:50%;background:conic-gradient(var(--cyan) var(--sdeg),rgba(255,255,255,.06) 0);display:flex;align-items:center;justify-content:center;position:relative;}
+.res-ring::before{content:'';position:absolute;width:100px;height:100px;background:var(--bg);border-radius:50%;}
+.res-pct{position:relative;z-index:1;font-family:var(--mono);font-size:28px;font-weight:700;color:var(--cyan);}
+.res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0;}
+.res-stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.res-stat .rv{font-family:var(--mono);font-size:20px;font-weight:700;}
+.res-stat .rl{font-size:11px;color:var(--muted2);margin-top:2px;}
+
+/* ── ROADMAP */
+.roadmap-wrap{max-width:900px;}
+.lang-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;}
+.lang-tab{padding:7px 16px;border-radius:7px;border:1px solid var(--border2);color:var(--muted2);font-family:var(--mono);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;background:transparent;}
+.lang-tab.active{background:var(--cyan);color:var(--bg);border-color:var(--cyan);}
+
+.roadmap-track{position:relative;padding-left:32px;}
+.roadmap-track::before{content:'';position:absolute;left:11px;top:0;bottom:0;width:2px;background:linear-gradient(var(--cyan),var(--purple));}
+.rm-phase{margin-bottom:24px;}
+.rm-dot{position:absolute;left:0;width:24px;height:24px;border-radius:50%;border:2px solid var(--cyan);background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:var(--mono);color:var(--cyan);}
+.rm-dot.done{background:var(--cyan);color:var(--bg);}
+.rm-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-left:14px;position:relative;}
+.rm-phase-title{font-size:14px;font-weight:700;}
+.rm-topics{padding-left:14px;display:flex;flex-wrap:wrap;gap:7px;}
+.rm-topic{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;font-family:var(--mono);cursor:pointer;transition:all .2s;}
+.rm-topic.done-t{background:rgba(57,255,144,.1);border:1px solid rgba(57,255,144,.25);color:var(--green);text-decoration:line-through;opacity:.6;}
+.rm-topic.active-t{background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.3);color:var(--cyan);}
+.rm-topic.locked-t{background:rgba(255,255,255,.03);border:1px solid var(--border);color:var(--muted);}
+
+/* ── PROFILE */
+.prof-hero{background:linear-gradient(135deg,var(--card) 0%,rgba(0,229,255,.08) 100%);border:1px solid var(--border2);border-radius:14px;padding:24px 28px;display:flex;align-items:center;gap:22px;margin-bottom:20px;}
+.prof-av{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:var(--bg);flex-shrink:0;}
+.prof-nm{font-size:20px;font-weight:800;letter-spacing:-.02em;margin-bottom:3px;}
+.prof-sub{font-family:var(--mono);font-size:11px;color:var(--muted2);margin-bottom:10px;}
+.prof-badges{display:flex;gap:7px;flex-wrap:wrap;}
+.pbadge{padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;font-family:var(--mono);}
+.xp-wrap{margin-top:10px;max-width:360px;}
+.xp-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--muted2);margin-bottom:4px;}
+.xp-bar{height:7px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:3px;transition:width 1s;}
+
+/* ── SETTINGS */
+.settings-wrap{max-width:560px;}
+.set-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px;}
+.set-hd{font-size:13px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+.set-row:last-child{border:none;}
+.set-info .set-nm{font-size:13px;font-weight:600;margin-bottom:2px;}
+.set-info .set-ds{font-size:12px;color:var(--muted2);}
+.toggle{width:42px;height:22px;border-radius:11px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.toggle.on{background:var(--cyan);}
+.toggle.off{background:rgba(255,255,255,.1);}
+.toggle::after{content:'';position:absolute;top:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:left .2s;}
+.toggle.on::after{left:23px;}
+.toggle.off::after{left:3px;}
+
+.api-key-manage{background:rgba(189,147,249,.05);border:1px solid rgba(189,147,249,.2);border-radius:10px;padding:14px;}
+.api-key-manage p{font-size:12px;color:var(--muted2);margin-bottom:10px;line-height:1.5;}
+.api-key-display{font-family:var(--mono);font-size:12px;color:var(--purple);background:rgba(189,147,249,.08);padding:8px 12px;border-radius:6px;margin-bottom:10px;word-break:break-all;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.anim{animation:fadeUp .35s ease both;}
+
+/* ── TOAST */
+.toast{position:fixed;bottom:24px;right:24px;padding:12px 18px;border-radius:9px;font-size:13px;font-weight:600;z-index:9999;animation:toastIn .3s ease;display:none;}
+.toast.show{display:block;}
+.toast.success{background:rgba(57,255,144,.15);border:1px solid rgba(57,255,144,.3);color:var(--green);}
+.toast.error{background:rgba(255,85,85,.15);border:1px solid rgba(255,85,85,.3);color:var(--red);}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+@media(max-width:900px){
+  .auth-wrap{grid-template-columns:1fr;max-width:420px;}
+  .auth-hero{display:none;}
+  .sidebar{transform:translateX(-100%);}
+  .main{margin-left:0;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .two-col,.three-col{grid-template-columns:1fr;}
+  .tutor-layout{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ══════════════════════════════════════════ AUTH PAGE -->
+<div id="authPage">
+  <div class="auth-bg"></div>
+  <div class="auth-grid"></div>
+  <div class="auth-wrap">
+
+    <div class="auth-hero">
+      <div class="brand">
+        <div class="brand-icon">&lt;/&gt;</div>
+        <div class="brand-name">Engi<span>neX</span></div>
+      </div>
+      <h1>Master<br>Engineering<br><span class="hl">Like a Pro.</span></h1>
+      <p>An AI-powered learning platform built for CS &amp; Engineering students. Real practice, real feedback, and an AI tutor that actually understands code.</p>
+      <div class="lang-pills">
+        <span class="lang-pill lp-py">🐍 Python</span>
+        <span class="lang-pill lp-js">⚡ JavaScript</span>
+        <span class="lang-pill lp-java">☕ Java</span>
+        <span class="lang-pill lp-cpp">🔷 C++</span>
+        <span class="lang-pill lp-ds">🌲 DSA</span>
+        <span class="lang-pill lp-db">🗄️ DBMS</span>
+        <span class="lang-pill lp-os">⚙️ OS</span>
+        <span class="lang-pill lp-cn">🌐 Networks</span>
+      </div>
+    </div>
+
+    <div class="auth-card">
+      <h2 id="authTitle">Welcome Back</h2>
+      <p class="sub" id="authSub">Sign in to your engineering dashboard</p>
+
+      <div class="tabs">
+        <button class="tab-btn active" id="tabLogin" onclick="switchAuthTab('login')">Sign In</button>
+        <button class="tab-btn" id="tabSignup" onclick="switchAuthTab('signup')">Sign Up</button>
+      </div>
+
+      <div id="authErr" class="err-msg"></div>
+      <div id="authOk" class="ok-msg"></div>
+
+      <!-- LOGIN FORM -->
+      <div id="loginForm">
+        <div class="form-group">
+          <label>Email Address</label>
+          <div class="inp-wrap">
+            <span class="inp-ico">📧</span>
+            <input type="email" id="li-email" placeholder="you@university.edu" autocomplete="email">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="inp-wrap">
+            <span class="inp-ico">🔑</span>
+            <input type="password" id="li-pass" placeholder="••••••••" autocomplete="current-password">
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+          <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted2);cursor:pointer">
+            <input type="checkbox" id="li-remember" checked style="accent-color:var(--cyan)"> Remember me
+          </label>
+          <a href="#" style="font-size:12px;color:var(--cyan);text-decoration:none;">Forgot password?</a>
+        </div>
+        <button class="btn-auth" onclick="doLogin()">Sign In →</button>
+        <div style="text-align:center;margin-top:14px;font-size:12px;color:var(--muted2)">
+          No account? <a href="#" style="color:var(--cyan);text-decoration:none;" onclick="switchAuthTab('signup')">Sign up free</a>
+        </div>
+      </div>
+
+      <!-- SIGNUP FORM -->
+      <div id="signupForm" style="display:none">
+        <div class="row2">
+          <div class="form-group">
+            <label>First Name</label>
+            <div class="inp-wrap">
+              <span class="inp-ico">👤</span>
+              <input type="text" id="su-fname" placeholder="Arjun">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <div class="inp-wrap">
+              <span class="inp-ico">👤</span>
+              <input type="text" id="su-lname" placeholder="Sharma">
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>University Email</label>
+          <div class="inp-wrap">
+            <span class="inp-ico">📧</span>
+            <input type="email" id="su-email" placeholder="you@university.edu">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Branch / Specialisation</label>
+          <div class="inp-wrap">
+            <span class="inp-ico">🎓</span>
+            <select id="su-branch">
+              <option value="">Select your branch</option>
+              <option>Computer Science Engineering</option>
+              <option>Information Technology</option>
+              <option>Electronics &amp; Communication</option>
+              <option>Electrical Engineering</option>
+              <option>Mechanical Engineering</option>
+              <option>Civil Engineering</option>
+              <option>Data Science &amp; AI</option>
+            </select>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="form-group">
+            <label>Year</label>
+            <div class="inp-wrap">
+              <span class="inp-ico">📅</span>
+              <select id="su-year">
+                <option>1st Year</option><option>2nd Year</option>
+                <option>3rd Year</option><option>4th Year</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <div class="inp-wrap">
+              <span class="inp-ico">🔑</span>
+              <input type="password" id="su-pass" placeholder="Min 6 chars">
+            </div>
+          </div>
+        </div>
+        <button class="btn-auth" onclick="doSignup()">Create Account →</button>
+        <div style="text-align:center;margin-top:14px;font-size:12px;color:var(--muted2)">
+          Have an account? <a href="#" style="color:var(--cyan);text-decoration:none;" onclick="switchAuthTab('login')">Sign in</a>
+        </div>
+      </div>
+
+      <div class="divider">AI Tutor Setup (Optional)</div>
+      <div class="api-key-section">
+        <p>Paste your <strong style="color:var(--purple)">Anthropic API key</strong> to enable the real AI tutor powered by Claude.<br>
+        <a href="https://console.anthropic.com/keys" target="_blank">Get a key at console.anthropic.com →</a></p>
+        <div class="api-input">
+          <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." autocomplete="off">
+          <button class="api-save-btn" onclick="saveApiKey()">Save Key</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ APP SHELL -->
+<div id="appShell" class="hidden">
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-logo">&lt;/&gt;</div>
+      <div><div class="sb-title">Engi<span>neX</span></div></div>
+    </div>
+    <nav>
+      <div class="nav-sec">
+        <div class="nav-lbl">Main</div>
+        <button class="nav-item active" onclick="goPanel('dashboard',this)"><span class="nav-ico">📊</span>Dashboard</button>
+        <button class="nav-item" onclick="goPanel('tutor',this)"><span class="nav-ico">🤖</span>AI Tutor<span class="nav-badge green">Live</span></button>
+        <button class="nav-item" onclick="goPanel('quiz',this)"><span class="nav-ico">⚡</span>Mock Tests</button>
+      </div>
+      <div class="nav-sec">
+        <div class="nav-lbl">Learning</div>
+        <button class="nav-item" onclick="goPanel('roadmap',this)"><span class="nav-ico">🗺️</span>Roadmaps</button>
+        <button class="nav-item" onclick="goPanel('progress',this)"><span class="nav-ico">📈</span>Progress</button>
+        <button class="nav-item" onclick="goPanel('leaderboard',this)"><span class="nav-ico">🏆</span>Leaderboard</button>
+      </div>
+      <div class="nav-sec">
+        <div class="nav-lbl">Account</div>
+        <button class="nav-item" onclick="goPanel('profile',this)"><span class="nav-ico">👤</span>Profile</button>
+        <button class="nav-item" onclick="goPanel('settings',this)"><span class="nav-ico">⚙️</span>Settings</button>
+      </div>
+    </nav>
+    <div class="sb-user">
+      <div class="sb-avatar" id="sbAv">A</div>
+      <div style="flex:1;min-width:0;">
+        <div class="sb-uname" id="sbName">Engineer</div>
+        <div class="sb-urole" id="sbRole">Level 1</div>
+      </div>
+      <button class="sb-logout" onclick="doLogout()" title="Logout">⇤</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="pg-title" id="pgTitle">Dashboard</div>
+        <div class="pg-title pg-sub" id="pgSub">Welcome back 👋</div>
+      </div>
+      <div class="topbar-right">
+        <div class="search-bar"><span>🔍</span><input type="text" placeholder="Search topics, langs…"></div>
+        <div class="ico-btn">🔔<span class="notif-dot"></span></div>
+        <div class="ico-btn" onclick="goPanel('profile',null)" id="topAvatar">👤</div>
+      </div>
+    </div>
+
+    <!-- ──────────── DASHBOARD ──────────── -->
+    <div id="panel-dashboard" class="panel active">
+      <div class="welcome-bar anim">
+        <div class="wb-text">
+          <h2 id="wbGreet">Good afternoon, Engineer! 👾</h2>
+          <p>You have 3 weak topics to review. Your AI tutor is ready.</p>
+        </div>
+        <div class="wb-streak">
+          <div class="sf">🔥</div>
+          <div class="sc" id="streakCount">0</div>
+          <div class="sl">Day Streak</div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-c anim" style="animation-delay:.05s">
+          <div class="sc-head"><div class="sc-ico" style="background:rgba(0,229,255,.1)">🧩</div><span class="sc-delta delta-up">+8%</span></div>
+          <div class="sc-val" id="statTopics">0</div><div class="sc-lbl">Topics Mastered</div>
+        </div>
+        <div class="stat-c anim" style="animation-delay:.1s">
+          <div class="sc-head"><div class="sc-ico" style="background:rgba(57,255,144,.1)">⚡</div><span class="sc-delta delta-up">+3</span></div>
+          <div class="sc-val" id="statTests">0</div><div class="sc-lbl">Tests Completed</div>
+        </div>
+        <div class="stat-c anim" style="animation-delay:.15s">
+          <div class="sc-head"><div class="sc-ico" style="background:rgba(189,147,249,.1)">🏅</div><span class="sc-delta delta-up">+200</span></div>
+          <div class="sc-val" id="statXP">0</div><div class="sc-lbl">XP Points</div>
+        </div>
+        <div class="stat-c anim" style="animation-delay:.2s">
+          <div class="sc-head"><div class="sc-ico" style="background:rgba(241,250,140,.1)">🎯</div><span class="sc-delta delta-dn">-2%</span></div>
+          <div class="sc-val" id="statScore">0%</div><div class="sc-lbl">Avg Test Score</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="sec-card anim">
+          <div class="sec-hd">Language Progress <button class="sec-act" onclick="goPanel('progress',null)">→ details</button></div>
+          <div id="langBars"></div>
+        </div>
+        <div class="sec-card anim">
+          <div class="sec-hd">Recent Activity</div>
+          <div id="recentAct"></div>
+        </div>
+      </div>
+
+      <div class="three-col">
+        <div class="sec-card anim" style="cursor:pointer" onclick="goPanel('tutor',document.querySelectorAll('.nav-item')[1])">
+          <div style="font-size:26px;margin-bottom:8px">🤖</div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:4px">Ask AI Tutor</div>
+          <div style="font-size:12px;color:var(--muted2);margin-bottom:12px">Debug code, explain algos, review concepts</div>
+          <div style="display:inline-block;padding:6px 14px;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.25);border-radius:6px;font-family:var(--mono);font-size:11px;color:var(--cyan)">Ask Now →</div>
+        </div>
+        <div class="sec-card anim" style="cursor:pointer" onclick="goPanel('quiz',document.querySelectorAll('.nav-item')[2])">
+          <div style="font-size:26px;margin-bottom:8px">⚡</div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:4px">Mock Test</div>
+          <div style="font-size:12px;color:var(--muted2);margin-bottom:12px">DSA, OS, DBMS, CN & more</div>
+          <div style="display:inline-block;padding:6px 14px;background:rgba(57,255,144,.1);border:1px solid rgba(57,255,144,.25);border-radius:6px;font-family:var(--mono);font-size:11px;color:var(--green)">Start Test →</div>
+        </div>
+        <div class="sec-card anim">
+          <div style="font-size:26px;margin-bottom:8px">📅</div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:4px">Today's Target</div>
+          <div style="font-size:12px;color:var(--muted2);margin-bottom:10px">Complete 2 topics</div>
+          <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--muted2)"><span>Progress</span><span id="todayProg">1/2</span></div>
+          <div style="height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden"><div style="width:50%;height:100%;background:var(--cyan);border-radius:3px"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──────────── AI TUTOR ──────────── -->
+    <div id="panel-tutor" class="panel">
+      <div class="tutor-layout">
+        <div class="chat-main">
+          <div class="chat-hd">
+            <div class="ai-av">AI</div>
+            <div style="flex:1">
+              <div style="font-weight:700;font-size:14px">EngineX AI Tutor</div>
+              <div class="ai-stat">Ready to debug &amp; explain</div>
+            </div>
+            <span class="model-badge" id="modelBadge">Demo Mode</span>
+          </div>
+          <div class="chat-msgs" id="chatMsgs">
+            <div class="msg ai">
+              <div class="msg-lbl">AI Tutor</div>
+              <div class="msg-bub">Hey! 👾 I'm your engineering AI tutor. I can help you with:<br><br>
+                • <strong>Python, Java, JavaScript, C++</strong> — code reviews &amp; debugging<br>
+                • <strong>DSA</strong> — algorithms, complexity, trees, graphs<br>
+                • <strong>DBMS</strong> — SQL queries, normalization, transactions<br>
+                • <strong>OS</strong> — processes, memory management, scheduling<br>
+                • <strong>Computer Networks</strong> — TCP/IP, OSI model, protocols<br><br>
+                What do you want to learn today?
+              </div>
+            </div>
+          </div>
+          <div class="chat-inp-area">
+            <textarea class="chat-inp" id="chatInp" rows="1" placeholder="Ask anything… e.g. 'Explain Big O of quicksort' or 'Debug my Python code'" onkeydown="chatKey(event)"></textarea>
+            <button class="send-btn" id="sendBtn" onclick="sendMsg()">➤</button>
+          </div>
+        </div>
+
+        <div class="tutor-sb">
+          <div class="sec-card">
+            <div class="sec-hd" style="margin-bottom:10px">Quick Ask</div>
+            <div class="topic-grid" id="topicChips"></div>
+          </div>
+          <div class="sec-card">
+            <div class="sec-hd" style="margin-bottom:10px;font-size:12px">Session Stats</div>
+            <div style="display:flex;gap:8px">
+              <div style="flex:1;text-align:center;padding:10px;background:rgba(255,255,255,.03);border-radius:8px">
+                <div style="font-family:var(--mono);font-size:18px;font-weight:700" id="msgCount">1</div>
+                <div style="font-size:11px;color:var(--muted2)">Messages</div>
+              </div>
+              <div style="flex:1;text-align:center;padding:10px;background:rgba(255,255,255,.03);border-radius:8px">
+                <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--cyan)" id="xpCount">+50</div>
+                <div style="font-size:11px;color:var(--muted2)">XP Earned</div>
+              </div>
+            </div>
+          </div>
+          <div class="sec-card" id="apiKeyCard" style="display:none">
+            <div class="sec-hd" style="margin-bottom:10px;color:var(--purple);font-size:12px">⚡ Enable Real AI</div>
+            <p style="font-size:11px;color:var(--muted2);margin-bottom:10px;line-height:1.5">Add your Anthropic API key for real Claude-powered responses.</p>
+            <div class="api-input">
+              <input type="password" id="inlineApiKey" placeholder="sk-ant-…" style="flex:1;padding:8px 10px;background:rgba(255,255,255,.05);border:1px solid rgba(189,147,249,.25);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:11px;outline:none;">
+              <button onclick="saveApiKeyInline()" style="padding:8px 12px;background:rgba(189,147,249,.15);border:1px solid rgba(189,147,249,.3);border-radius:6px;color:var(--purple);font-family:var(--sans);font-size:11px;font-weight:600;cursor:pointer;">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──────────── QUIZ ──────────── -->
+    <div id="panel-quiz" class="panel">
+      <div id="quizPick" class="quiz-pick">
+        <div style="font-size:42px;margin-bottom:14px">⚡</div>
+        <h2>Engineering Mock Tests</h2>
+        <p>AI-curated questions across core CS &amp; engineering subjects.</p>
+        <div class="qsubj-grid" id="qSubjGrid"></div>
+        <div class="diff-row">
+          <button class="diff-btn" onclick="pickDiff(this,'Easy')">Easy</button>
+          <button class="diff-btn sel-m" id="diffSel" onclick="pickDiff(this,'Medium')">Medium ✓</button>
+          <button class="diff-btn" onclick="pickDiff(this,'Hard')">Hard</button>
+        </div>
+        <button class="btn-startq" onclick="startQuiz()">Start Quiz (10 Qs) →</button>
+      </div>
+
+      <div id="quizActive" class="quiz-active hidden">
+        <div class="q-hdr">
+          <span style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--muted2)">Q <span id="qNum">1</span>/10</span>
+          <div class="q-prog-bar"><div class="q-prog-fill" id="qPF" style="width:10%"></div></div>
+          <div class="q-timer-badge" id="qTimer">⏱ 35s</div>
+        </div>
+        <div class="q-box">
+          <div class="q-pills" id="qPills"></div>
+          <div class="q-q" id="qText"></div>
+          <div class="q-opts" id="qOpts"></div>
+          <div class="q-foot">
+            <span id="qFb" style="font-size:13px"></span>
+            <button class="btn-next" id="btnNext" disabled onclick="nextQ()">Next →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="quizRes" class="quiz-res hidden">
+        <div class="res-ring" id="resRing"><div class="res-pct" id="resPct">0%</div></div>
+        <h2 style="font-size:22px;font-weight:800;margin-bottom:7px" id="resTitle">Result</h2>
+        <p style="color:var(--muted2);font-size:13px;margin-bottom:5px" id="resMsg"></p>
+        <div class="res-grid">
+          <div class="res-stat"><div class="rv" style="color:var(--green)" id="resC">0</div><div class="rl">Correct</div></div>
+          <div class="res-stat"><div class="rv" style="color:var(--red)" id="resW">0</div><div class="rl">Wrong</div></div>
+          <div class="res-stat"><div class="rv" style="color:var(--cyan)" id="resXP">0</div><div class="rl">XP Earned</div></div>
+        </div>
+        <button class="btn-startq" onclick="resetQuiz()">Try Another →</button>
+      </div>
+    </div>
+
+    <!-- ──────────── ROADMAP ──────────── -->
+    <div id="panel-roadmap" class="panel">
+      <div class="roadmap-wrap">
+        <div class="lang-tabs" id="langTabs"></div>
+        <div id="roadmapContent"></div>
+      </div>
+    </div>
+
+    <!-- ──────────── PROGRESS ──────────── -->
+    <div id="panel-progress" class="panel">
+      <div class="two-col" style="margin-bottom:20px">
+        <div class="sec-card">
+          <div class="sec-hd">Weekly Study Activity</div>
+          <div id="weekChart" style="display:flex;align-items:flex-end;gap:6px;height:90px;padding-top:8px"></div>
+          <div style="display:flex;justify-content:space-around;margin-top:7px">
+            <span style="font-family:var(--mono);font-size:10px;color:var(--muted2)">Mon</span>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--muted2)">Tue</span>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--muted2)">Wed</span>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--muted2)">Thu</span>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--muted2)">Fri</span>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--muted2)">Sat</span>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--muted2)">Sun</span>
+          </div>
+        </div>
+        <div class="sec-card">
+          <div class="sec-hd">Test Score History</div>
+          <div id="scoreHist"></div>
+        </div>
+      </div>
+      <div class="sec-card">
+        <div class="sec-hd">Detailed Language &amp; Subject Progress</div>
+        <div id="detailProg"></div>
+      </div>
+    </div>
+
+    <!-- ──────────── LEADERBOARD ──────────── -->
+    <div id="panel-leaderboard" class="panel">
+      <div class="two-col">
+        <div class="sec-card">
+          <div class="sec-hd">🏆 Top Engineers This Week</div>
+          <div id="leaderList"></div>
+        </div>
+        <div class="sec-card">
+          <div class="sec-hd">Your Rank</div>
+          <div style="text-align:center;padding:18px 0">
+            <div style="font-family:var(--mono);font-size:52px;font-weight:700;color:var(--cyan)">#4</div>
+            <div style="color:var(--muted2);font-size:13px;margin-bottom:16px">out of 2,840 students</div>
+            <div style="background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.15);border-radius:10px;padding:14px">
+              <div style="font-size:12px;color:var(--muted2);margin-bottom:5px">XP to reach #3</div>
+              <div style="font-family:var(--mono);font-size:20px;font-weight:700;color:var(--yellow)">+420 XP</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+            <div style="background:rgba(255,255,255,.03);border-radius:8px;padding:12px;text-align:center">
+              <div style="font-family:var(--mono);font-size:18px;font-weight:700" id="lbStreak">0</div>
+              <div style="font-size:11px;color:var(--muted2)">Day Streak 🔥</div>
+            </div>
+            <div style="background:rgba(255,255,255,.03);border-radius:8px;padding:12px;text-align:center">
+              <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--cyan)" id="lbXP">0</div>
+              <div style="font-size:11px;color:var(--muted2)">Total XP</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──────────── PROFILE ──────────── -->
+    <div id="panel-profile" class="panel">
+      <div class="prof-hero">
+        <div class="prof-av" id="profAv">A</div>
+        <div style="flex:1">
+          <div class="prof-nm" id="profName">Engineer</div>
+          <div class="prof-sub" id="profSub">CSE · 2nd Year</div>
+          <div class="prof-badges" id="profBadges"></div>
+          <div class="xp-wrap">
+            <div class="xp-labels"><span>XP to next level</span><span id="xpFrac">0 / 1000</span></div>
+            <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+          </div>
+        </div>
+        <button style="padding:9px 18px;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer">Edit ✏️</button>
+      </div>
+      <div class="three-col">
+        <div class="sec-card">
+          <div class="sec-hd">🗂️ Languages</div>
+          <div id="profLangs" style="font-size:13px;line-height:2;color:var(--muted2)"></div>
+        </div>
+        <div class="sec-card">
+          <div class="sec-hd">🏅 Badges</div>
+          <div id="profBadgeGrid" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+        </div>
+        <div class="sec-card">
+          <div class="sec-hd">📊 Stats</div>
+          <div id="profStats" style="display:flex;flex-direction:column;gap:9px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──────────── SETTINGS ──────────── -->
+    <div id="panel-settings" class="panel">
+      <div class="settings-wrap">
+        <div class="set-card">
+          <div class="set-hd">🔑 API Key</div>
+          <div class="api-key-manage">
+            <p>Your Anthropic API key powers the real AI tutor. It's stored only in your browser (localStorage) and never sent to our servers.</p>
+            <div class="api-key-display" id="apiKeyDisplay">No key saved</div>
+            <div class="api-input">
+              <input type="password" id="settingsApiKey" placeholder="sk-ant-api03-…">
+              <button class="api-save-btn" onclick="saveApiKeySettings()">Update</button>
+            </div>
+          </div>
+        </div>
+        <div class="set-card">
+          <div class="set-hd">🔔 Notifications</div>
+          <div class="set-row">
+            <div class="set-info"><div class="set-nm">Daily Reminder</div><div class="set-ds">Remind to study at 8 PM</div></div>
+            <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div>
+          </div>
+          <div class="set-row">
+            <div class="set-info"><div class="set-nm">Streak Alerts</div><div class="set-ds">Don't break your streak</div></div>
+            <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div>
+          </div>
+          <div class="set-row">
+            <div class="set-info"><div class="set-nm">Badge Unlocks</div><div class="set-ds">New achievement alerts</div></div>
+            <div class="toggle off" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div>
+          </div>
+        </div>
+        <div class="set-card">
+          <div class="set-hd">⚠️ Account</div>
+          <div class="set-row">
+            <div class="set-info"><div class="set-nm" style="color:var(--red)">Delete Account</div><div class="set-ds">Permanently remove all data</div></div>
+            <button onclick="deleteAccount()" style="padding:7px 14px;background:rgba(255,85,85,.1);border:1px solid rgba(255,85,85,.3);border-radius:7px;color:var(--red);font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;">Delete</button>
+          </div>
+          <div class="set-row">
+            <div class="set-info"><div class="set-nm">Sign Out</div><div class="set-ds">Log out of this device</div></div>
+            <button onclick="doLogout()" style="padding:7px 14px;background:rgba(255,255,255,.06);border:1px solid var(--border2);border-radius:7px;color:var(--text);font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;">Logout</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ══════════════════════════════════ DATA
+
+const SUBJECTS = [
+  {id:'python',nm:'Python',ico:'🐍',color:'var(--green)',topics:56},
+  {id:'javascript',nm:'JavaScript',ico:'⚡',color:'var(--yellow)',topics:48},
+  {id:'java',nm:'Java',ico:'☕',color:'var(--orange)',topics:44},
+  {id:'cpp',nm:'C++',ico:'🔷',color:'var(--cyan)',topics:40},
+  {id:'dsa',nm:'DSA',ico:'🌲',color:'var(--purple)',topics:60},
+  {id:'dbms',nm:'DBMS',ico:'🗄️',color:'var(--pink)',topics:36},
+  {id:'os',nm:'Operating Systems',ico:'⚙️',color:'var(--red)',topics:32},
+  {id:'cn',nm:'Computer Networks',ico:'🌐',color:'#7dcfff',topics:28},
+];
+
+const QUIZ_BANK = {
+  python:[
+    {q:"What is the output of `print(type([]))`?",opts:["<class 'list'>","<class 'array'>","list","[]"],c:0,exp:"type([]) returns the class 'list' in Python."},
+    {q:"Which keyword is used for function definition in Python?",opts:["function","def","func","define"],c:1,exp:"Python uses 'def' to define functions."},
+    {q:"What does `len('hello')` return?",opts:["4","5","6","Error"],c:1,exp:"The string 'hello' has 5 characters."},
+    {q:"Which of these is a mutable data type in Python?",opts:["tuple","string","list","int"],c:2,exp:"Lists are mutable; tuples and strings are immutable."},
+    {q:"What is the output of `2 ** 3` in Python?",opts:["6","8","9","5"],c:1,exp:"** is the power operator. 2³ = 8."},
+    {q:"Which method removes the last element from a list?",opts:[".remove()","del","pop()","clear()"],c:2,exp:"list.pop() removes and returns the last element."},
+    {q:"What is a lambda function?",opts:["A recursive function","An anonymous function","A generator","A decorator"],c:1,exp:"Lambda creates small anonymous one-liner functions."},
+    {q:"What does `range(5)` produce?",opts:["0,1,2,3,4,5","1,2,3,4,5","0,1,2,3,4","1,2,3,4"],c:2,exp:"range(5) generates 0 through 4 (exclusive of 5)."},
+    {q:"Which is NOT a Python built-in data structure?",opts:["dict","set","array","list"],c:2,exp:"array is not built-in; you need to import it from array module."},
+    {q:"What is 'self' in a Python class?",opts:["A keyword","A reference to the current instance","A global variable","A static method"],c:1,exp:"'self' refers to the instance of the class."},
+  ],
+  javascript:[
+    {q:"Which keyword declares a block-scoped variable in JS?",opts:["var","let","const","all of these"],c:1,exp:"'let' is block-scoped. 'var' is function-scoped, 'const' is block-scoped but immutable."},
+    {q:"What does `===` check in JavaScript?",opts:["Value only","Type only","Value and Type","Reference"],c:2,exp:"=== is strict equality; checks both value and type."},
+    {q:"What is the output of `typeof null`?",opts:["null","undefined","object","error"],c:2,exp:"This is a known JS bug — typeof null returns 'object'."},
+    {q:"Which method converts JSON string to object?",opts:["JSON.parse()","JSON.stringify()","JSON.decode()","JSON.convert()"],c:0,exp:"JSON.parse() converts a JSON string into a JavaScript object."},
+    {q:"What is a closure in JavaScript?",opts:["A loop","A function with access to its outer scope","An object method","An async function"],c:1,exp:"A closure is a function that retains access to its enclosing scope."},
+    {q:"What does `Array.prototype.map()` return?",opts:["undefined","The same array","A new array","A number"],c:2,exp:"map() creates a new array with the results of calling a function."},
+    {q:"What is the event loop in JavaScript?",opts:["A for loop","A mechanism handling async operations","A type of array","A CSS feature"],c:1,exp:"The event loop allows JS to perform non-blocking I/O."},
+    {q:"Which is NOT a falsy value in JS?",opts:["0","''","[]","null"],c:2,exp:"An empty array [] is truthy in JavaScript."},
+    {q:"What does `Promise.all()` do?",opts:["Runs promises sequentially","Resolves when ALL promises resolve","Resolves when ANY resolves","Ignores errors"],c:1,exp:"Promise.all() waits for all promises to fulfill or any to reject."},
+    {q:"What is the prototype chain?",opts:["An array of methods","Inheritance mechanism in JS","A design pattern","A build tool"],c:1,exp:"JavaScript uses prototypal inheritance via the prototype chain."},
+  ],
+  dsa:[
+    {q:"What is the time complexity of binary search?",opts:["O(n)","O(log n)","O(n log n)","O(1)"],c:1,exp:"Binary search halves the search space each step → O(log n)."},
+    {q:"Which data structure uses LIFO order?",opts:["Queue","Stack","Linked List","Tree"],c:1,exp:"Stack (Last In First Out) — push/pop operations."},
+    {q:"What is the worst-case time complexity of quicksort?",opts:["O(n log n)","O(n²)","O(n)","O(log n)"],c:1,exp:"Quicksort worst case (already sorted with bad pivot) is O(n²)."},
+    {q:"In a Binary Search Tree, where is the largest element?",opts:["Root","Leftmost node","Rightmost node","Random"],c:2,exp:"In a BST, all right children are greater, so the max is the rightmost node."},
+    {q:"What is the space complexity of merge sort?",opts:["O(1)","O(log n)","O(n)","O(n²)"],c:2,exp:"Merge sort requires O(n) auxiliary space for merging."},
+    {q:"Which traversal visits root LAST in a binary tree?",opts:["Preorder","Inorder","Postorder","Level order"],c:2,exp:"Postorder: Left → Right → Root."},
+    {q:"What is a hash collision?",opts:["Two equal keys","Two different keys map to same bucket","A hash function error","A null pointer"],c:1,exp:"A collision occurs when two different keys hash to the same index."},
+    {q:"What algorithm finds the shortest path in a weighted graph?",opts:["BFS","DFS","Dijkstra's","Kruskal's"],c:2,exp:"Dijkstra's algorithm finds shortest paths from a source vertex."},
+    {q:"What is the height of a balanced BST with n nodes?",opts:["O(n)","O(log n)","O(√n)","O(1)"],c:1,exp:"A balanced BST has height O(log n)."},
+    {q:"Which sorting algorithm is stable AND O(n log n)?",opts:["Quicksort","Heapsort","Merge sort","Selection sort"],c:2,exp:"Merge sort is stable and always O(n log n)."},
+  ],
+  os:[
+    {q:"What is a deadlock?",opts:["Infinite loop","Circular wait for resources","Memory leak","Race condition"],c:1,exp:"Deadlock: processes wait in a circular chain for resources held by each other."},
+    {q:"What is the role of the PCB (Process Control Block)?",opts:["Memory management","Stores process metadata","Handles I/O","CPU scheduling"],c:1,exp:"PCB stores all information about a process: state, registers, PID, etc."},
+    {q:"Which page replacement algorithm is optimal (theoretical)?",opts:["FIFO","LRU","OPT (Belady's)","Random"],c:2,exp:"OPT replaces the page not needed for the longest time — optimal but impractical."},
+    {q:"What is thrashing in OS?",opts:["CPU overuse","Excessive paging causing low CPU utilization","Disk failure","Memory corruption"],c:1,exp:"Thrashing: too many page faults → OS spends more time paging than executing."},
+    {q:"What is a semaphore used for?",opts:["CPU scheduling","Process synchronization","Memory allocation","Disk I/O"],c:1,exp:"Semaphores are used to control access to shared resources — synchronization."},
+    {q:"Which scheduling algorithm may cause starvation?",opts:["Round Robin","FCFS","Priority Scheduling","SJF"],c:2,exp:"Priority Scheduling can starve low-priority processes indefinitely."},
+    {q:"What is virtual memory?",opts:["RAM","Disk space used as RAM","Cache","Register"],c:1,exp:"Virtual memory allows processes to use more memory than physically available by using disk as RAM."},
+    {q:"What is a context switch?",opts:["Changing terminals","Saving/restoring CPU state when switching processes","Changing memory pages","Switching users"],c:1,exp:"A context switch saves the current process state and loads the next process state."},
+    {q:"What is the difference between process and thread?",opts:["None","Thread is lighter, shares process memory","Process is faster","Thread has its own memory"],c:1,exp:"Threads share the process's memory space; they are lighter-weight than processes."},
+    {q:"What does the fork() system call do?",opts:["Create a file","Create a copy of the current process","Kill a process","Allocate memory"],c:1,exp:"fork() creates a child process that is a duplicate of the parent."},
+  ],
+  dbms:[
+    {q:"What does ACID stand for in databases?",opts:["Atomic, Consistent, Isolated, Durable","Async, Consistent, Independent, Durable","Atomic, Concurrent, Isolated, Direct","All of the above"],c:0,exp:"ACID: Atomicity, Consistency, Isolation, Durability — key transaction properties."},
+    {q:"What is normalization?",opts:["Speeding up queries","Removing data redundancy","Encrypting data","Indexing tables"],c:1,exp:"Normalization organizes a database to reduce redundancy and improve integrity."},
+    {q:"What is a primary key?",opts:["Any column","A unique identifier for each row","A foreign reference","An index"],c:1,exp:"Primary key uniquely identifies each record in a table."},
+    {q:"What SQL keyword retrieves unique values?",opts:["UNIQUE","DISTINCT","DIFFERENT","ONLY"],c:1,exp:"SELECT DISTINCT removes duplicate rows from results."},
+    {q:"What is a JOIN in SQL?",opts:["Combining rows from two tables","Deleting duplicate rows","Adding a column","Sorting results"],c:0,exp:"JOIN combines rows from two or more tables based on a related column."},
+    {q:"What is the difference between WHERE and HAVING?",opts:["None","WHERE filters rows; HAVING filters groups","HAVING is for subqueries","WHERE is for GROUP BY"],c:1,exp:"WHERE filters rows before grouping; HAVING filters after GROUP BY."},
+    {q:"What is a foreign key?",opts:["A secondary index","A key referencing the primary key of another table","An encrypted key","A composite key"],c:1,exp:"A foreign key creates a link between two tables via the primary key."},
+    {q:"Which normal form removes transitive dependencies?",opts:["1NF","2NF","3NF","BCNF"],c:2,exp:"3NF eliminates transitive dependencies (non-key attributes depending on other non-key attributes)."},
+    {q:"What does GROUP BY do?",opts:["Sort rows","Group rows sharing a value for aggregate functions","Filter rows","Create indexes"],c:1,exp:"GROUP BY groups rows with the same values to apply aggregate functions."},
+    {q:"What is an index in a database?",opts:["A backup","A data structure that speeds up retrieval","A constraint","A trigger"],c:1,exp:"An index is a B-tree (or hash) structure that speeds up query lookups."},
+  ],
+  cn:[
+    {q:"How many layers does the OSI model have?",opts:["4","5","7","8"],c:2,exp:"OSI model has 7 layers: Physical, Data Link, Network, Transport, Session, Presentation, Application."},
+    {q:"Which protocol is used for reliable transmission?",opts:["UDP","TCP","IP","ICMP"],c:1,exp:"TCP (Transmission Control Protocol) provides reliable, ordered, error-checked delivery."},
+    {q:"What is the purpose of DNS?",opts:["Assign IP addresses","Translate domain names to IP addresses","Encrypt data","Route packets"],c:1,exp:"DNS resolves human-readable domain names (like google.com) to IP addresses."},
+    {q:"What is the subnet mask for a /24 network?",opts:["255.0.0.0","255.255.0.0","255.255.255.0","255.255.255.255"],c:2,exp:"/24 means 24 bits for network → 255.255.255.0"},
+    {q:"What layer does a router operate at?",opts:["Layer 1","Layer 2","Layer 3","Layer 4"],c:2,exp:"Routers work at Layer 3 (Network layer), forwarding packets based on IP."},
+    {q:"What is the difference between TCP and UDP?",opts:["None","TCP is reliable, UDP is faster but unreliable","UDP is reliable","TCP is faster"],c:1,exp:"TCP: reliable, connection-oriented. UDP: connectionless, faster, used for streaming."},
+    {q:"What is ARP used for?",opts:["IP to domain resolution","IP to MAC address resolution","Routing","Encryption"],c:1,exp:"ARP (Address Resolution Protocol) maps IP addresses to MAC addresses."},
+    {q:"Which HTTP method is idempotent?",opts:["POST","PUT","PATCH","DELETE"],c:1,exp:"PUT is idempotent — calling it multiple times produces the same result."},
+    {q:"What is a three-way handshake?",opts:["A DNS lookup","TCP connection establishment (SYN, SYN-ACK, ACK)","An SSL protocol","A routing protocol"],c:1,exp:"TCP uses SYN → SYN-ACK → ACK to establish a connection."},
+    {q:"What does HTTPS add over HTTP?",opts:["Speed","TLS/SSL encryption","Compression","Caching"],c:1,exp:"HTTPS uses TLS/SSL to encrypt data in transit."},
+  ],
+  java:[
+    {q:"What is the output of `System.out.println(10/3)` in Java?",opts:["3.33","3","4","Error"],c:1,exp:"Integer division in Java truncates the decimal. 10/3 = 3."},
+    {q:"Which keyword prevents method overriding?",opts:["static","abstract","final","private"],c:2,exp:"'final' methods cannot be overridden in subclasses."},
+    {q:"What is the difference between == and .equals() in Java?",opts:["None","== checks reference; .equals() checks value","== is for primitives only","equals() is faster"],c:1,exp:"== compares references (memory addresses); .equals() compares actual content."},
+    {q:"What is the purpose of the 'interface' keyword?",opts:["Create an object","Define a contract for classes","Create a database connection","Handle exceptions"],c:1,exp:"An interface defines a contract — abstract methods that implementing classes must provide."},
+    {q:"What is polymorphism?",opts:["Multiple inheritance","One interface, many forms","Data hiding","Encapsulation"],c:1,exp:"Polymorphism allows the same interface to be used for different underlying forms."},
+    {q:"Which collection allows duplicate elements?",opts:["Set","TreeSet","HashSet","List"],c:3,exp:"List (ArrayList, LinkedList) allows duplicates. Sets do not."},
+    {q:"What does 'static' mean for a class member?",opts:["It's private","It belongs to the class, not instances","It can't be modified","It's final"],c:1,exp:"Static members belong to the class itself, shared across all instances."},
+    {q:"What is garbage collection in Java?",opts:["Deleting files","Automatic memory management","A sorting algorithm","A design pattern"],c:1,exp:"JVM's garbage collector automatically frees memory of unreachable objects."},
+    {q:"What is the purpose of 'try-catch'?",opts:["Loop control","Exception handling","Type casting","Multithreading"],c:1,exp:"try-catch handles exceptions to prevent program crashes."},
+    {q:"What is an abstract class?",opts:["A class with no methods","A class that can't be instantiated directly","A final class","A static class"],c:1,exp:"Abstract classes define common structure but cannot be instantiated; subclasses implement abstract methods."},
+  ],
+  cpp:[
+    {q:"What is a pointer in C++?",opts:["A data type","A variable that stores a memory address","An array","A reference"],c:1,exp:"A pointer holds the memory address of another variable."},
+    {q:"What does `new` keyword do in C++?",opts:["Creates a variable","Allocates memory on the heap","Allocates stack memory","Copies an object"],c:1,exp:"'new' allocates memory dynamically on the heap and returns a pointer."},
+    {q:"What is the difference between struct and class in C++?",opts:["None","Default access: struct=public, class=private","Struct can't have methods","Class can't have data"],c:1,exp:"The only difference is default access: struct is public, class is private."},
+    {q:"What is RAII in C++?",opts:["A design pattern","Resource Acquisition Is Initialization — tie resource lifetime to object lifetime","A memory leak","A type of pointer"],c:1,exp:"RAII ensures resources are released when objects go out of scope (e.g., smart pointers)."},
+    {q:"What is a virtual function?",opts:["A fast function","A function resolved at runtime (dynamic dispatch)","A static function","An inline function"],c:1,exp:"Virtual functions enable polymorphism — the correct derived class method is called at runtime."},
+    {q:"What is the STL?",opts:["A compiler","Standard Template Library — containers and algorithms","A graphics library","An OS library"],c:1,exp:"STL provides generic containers (vector, map, set) and algorithms (sort, find)."},
+    {q:"What is a smart pointer?",opts:["A faster raw pointer","An automatic memory-managing pointer","A pointer to a pointer","A const pointer"],c:1,exp:"Smart pointers (unique_ptr, shared_ptr) automatically manage heap memory."},
+    {q:"What does 'const' mean on a member function?",opts:["The function is static","The function won't modify the object","The function is private","The function returns const"],c:1,exp:"A const member function promises not to modify the object's state."},
+    {q:"What is template in C++?",opts:["A code file","Generic programming — write once for multiple types","A macro","A typedef"],c:1,exp:"Templates allow writing generic functions/classes that work with any data type."},
+    {q:"What is the output of `sizeof(int)` typically?",opts:["1","2","4","8"],c:2,exp:"On most 32/64-bit systems, int is 4 bytes."},
+  ],
+};
+
+const ROADMAPS = {
+  python:{
+    label:'Python', color:'var(--green)',
+    phases:[
+      {n:'Phase 1: Foundations',done:true,topics:['Variables & Types','Operators','Strings','Lists & Tuples','Dicts & Sets']},
+      {n:'Phase 2: Control Flow',done:true,topics:['if/else','for loops','while loops','List Comprehensions','Generators']},
+      {n:'Phase 3: Functions & OOP',done:false,active:true,topics:['def & scope','*args/**kwargs','Classes','Inheritance','Dunder methods']},
+      {n:'Phase 4: Advanced',done:false,topics:['Decorators','Context managers','Async/Await','Metaclasses','Type hints']},
+      {n:'Phase 5: Ecosystem',done:false,topics:['pip & venv','NumPy','Pandas','FastAPI','Testing with pytest']},
+    ]
+  },
+  javascript:{
+    label:'JavaScript', color:'var(--yellow)',
+    phases:[
+      {n:'Phase 1: Core JS',done:true,topics:['var/let/const','Functions','Arrays','Objects','Prototypes']},
+      {n:'Phase 2: DOM & Browser',done:false,active:true,topics:['DOM manipulation','Events','Fetch API','localStorage','Web APIs']},
+      {n:'Phase 3: Async JS',done:false,topics:['Callbacks','Promises','async/await','Event Loop','Error handling']},
+      {n:'Phase 4: Modern JS',done:false,topics:['ES6+ features','Modules','Destructuring','Spread/Rest','Optional chaining']},
+      {n:'Phase 5: Frameworks',done:false,topics:['React basics','State management','Node.js','Express','REST APIs']},
+    ]
+  },
+  dsa:{
+    label:'DSA',color:'var(--purple)',
+    phases:[
+      {n:'Phase 1: Basics',done:true,topics:['Arrays','Strings','Recursion','Big O Notation','Two Pointers']},
+      {n:'Phase 2: Linear DS',done:true,topics:['Linked Lists','Stacks','Queues','Hash Maps','Sliding Window']},
+      {n:'Phase 3: Trees',done:false,active:true,topics:['Binary Trees','BST','Heap/Priority Queue','Trie','AVL Trees']},
+      {n:'Phase 4: Graphs',done:false,topics:['BFS','DFS','Dijkstra','Bellman-Ford','Union-Find']},
+      {n:'Phase 5: Advanced',done:false,topics:['Dynamic Programming','Backtracking','Greedy','Segment Trees','String Algorithms']},
+    ]
+  },
+};
+
+const QUICK_TOPICS = [
+  {lang:'Python',q:'Explain Python decorators with example code'},
+  {lang:'JS',q:'How does the JavaScript event loop work?'},
+  {lang:'Java',q:'Explain OOP pillars with Java examples'},
+  {lang:'DSA',q:'Explain Big O notation for binary search'},
+  {lang:'DBMS',q:'Explain SQL JOINs with examples'},
+  {lang:'OS',q:'How does virtual memory work?'},
+  {lang:'C++',q:'Explain smart pointers in C++'},
+  {lang:'CN',q:'Explain TCP three-way handshake'},
+];
+
+// ══════════════════════════════════════════ STATE
+let currentUser = null;
+let apiKey = '';
+let chatHistory = [];
+let quizState = { subj:'dsa', diff:'Medium', q:0, score:0, timer:null, timerVal:35, answered:false };
+let appData = { topics:0, tests:0, xp:0, avgScore:0, streak:0 };
+
+// ══════════════════════════════════════════ AUTH
+function switchAuthTab(tab) {
+  document.getElementById('tabLogin').classList.toggle('active', tab==='login');
+  document.getElementById('tabSignup').classList.toggle('active', tab==='signup');
+  document.getElementById('loginForm').style.display = tab==='login' ? 'block' : 'none';
+  document.getElementById('signupForm').style.display = tab==='signup' ? 'block' : 'none';
+  document.getElementById('authTitle').textContent = tab==='login' ? 'Welcome Back' : 'Create Account';
+  document.getElementById('authSub').textContent = tab==='login' ? 'Sign in to your engineering dashboard' : 'Join 12,000+ engineering students';
+  hideAuthMsg();
+}
+
+function showAuthErr(msg) {
+  const el = document.getElementById('authErr');
+  el.textContent = msg; el.style.display = 'block';
+  document.getElementById('authOk').style.display = 'none';
+}
+function showAuthOk(msg) {
+  const el = document.getElementById('authOk');
+  el.textContent = msg; el.style.display = 'block';
+  document.getElementById('authErr').style.display = 'none';
+}
+function hideAuthMsg() {
+  document.getElementById('authErr').style.display = 'none';
+  document.getElementById('authOk').style.display = 'none';
+}
+
+function doSignup() {
+  const fname = document.getElementById('su-fname').value.trim();
+  const lname = document.getElementById('su-lname').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const branch = document.getElementById('su-branch').value;
+  const year = document.getElementById('su-year').value;
+  const pass = document.getElementById('su-pass').value;
+
+  if(!fname||!lname) return showAuthErr('Please enter your full name.');
+  if(!email||!email.includes('@')) return showAuthErr('Please enter a valid email.');
+  if(!branch) return showAuthErr('Please select your branch.');
+  if(pass.length < 6) return showAuthErr('Password must be at least 6 characters.');
+
+  const users = JSON.parse(localStorage.getItem('enginex_users')||'{}');
+  if(users[email]) return showAuthErr('An account with this email already exists. Please sign in.');
+
+  const userData = {
+    fname, lname, email, pass, branch, year,
+    joined: new Date().toISOString(),
+    data: { topics:12, tests:5, xp:850, avgScore:74, streak:3,
+      activity:[{subj:'Python - Functions',score:82,date:'Today',type:'Test'},
+                {subj:'DSA - Arrays',score:90,date:'Yesterday',type:'Test'},
+                {subj:'JavaScript - Closures',score:0,date:'2 days ago',type:'Chat'},
+                {subj:'DBMS - Joins',score:68,date:'3 days ago',type:'Test'}]
+    }
+  };
+  users[email] = userData;
+  localStorage.setItem('enginex_users', JSON.stringify(users));
+  showAuthOk('Account created! Signing you in…');
+  setTimeout(() => launchApp(userData), 1000);
+}
+
+function doLogin() {
+  const email = document.getElementById('li-email').value.trim();
+  const pass = document.getElementById('li-pass').value;
+  if(!email) return showAuthErr('Please enter your email.');
+  if(!pass) return showAuthErr('Please enter your password.');
+
+  const users = JSON.parse(localStorage.getItem('enginex_users')||'{}');
+  const user = users[email];
+  if(!user) return showAuthErr('No account found. Please sign up first.');
+  if(user.pass !== pass) return showAuthErr('Incorrect password. Please try again.');
+
+  const remember = document.getElementById('li-remember').checked;
+  if(remember) localStorage.setItem('enginex_session', email);
+  launchApp(user);
+}
+
+function launchApp(user) {
+  currentUser = user;
+  apiKey = localStorage.getItem('enginex_apikey') || '';
+  if(apiKey) document.getElementById('modelBadge').textContent = 'Claude AI';
+  else document.getElementById('apiKeyCard').style.display = 'block';
+
+  document.getElementById('authPage').style.opacity = '0';
+  document.getElementById('authPage').style.transition = 'opacity 0.35s';
+  setTimeout(() => {
+    document.getElementById('authPage').classList.add('hidden');
+    document.getElementById('appShell').classList.remove('hidden');
+    initApp();
+  }, 350);
+}
+
+function doLogout() {
+  localStorage.removeItem('enginex_session');
+  document.getElementById('appShell').classList.add('hidden');
+  document.getElementById('authPage').classList.remove('hidden');
+  document.getElementById('authPage').style.opacity = '1';
+  currentUser = null; chatHistory = [];
+}
+
+function deleteAccount() {
+  if(!confirm('Delete your account permanently? This cannot be undone.')) return;
+  const users = JSON.parse(localStorage.getItem('enginex_users')||'{}');
+  delete users[currentUser.email];
+  localStorage.setItem('enginex_users', JSON.stringify(users));
+  doLogout();
+  toast('Account deleted.','error');
+}
+
+function saveApiKey() {
+  const k = document.getElementById('apiKeyInput').value.trim();
+  if(!k.startsWith('sk-ant')) return;
+  localStorage.setItem('enginex_apikey', k);
+  apiKey = k;
+  toast('API key saved! AI Tutor is now live.','success');
+}
+
+function saveApiKeyInline() {
+  const k = document.getElementById('inlineApiKey').value.trim();
+  if(!k.startsWith('sk-ant')) { toast('Invalid API key format.','error'); return; }
+  localStorage.setItem('enginex_apikey', k);
+  apiKey = k;
+  document.getElementById('modelBadge').textContent = 'Claude AI';
+  document.getElementById('apiKeyCard').style.display = 'none';
+  toast('AI Tutor activated!','success');
+}
+
+function saveApiKeySettings() {
+  const k = document.getElementById('settingsApiKey').value.trim();
+  if(!k.startsWith('sk-ant')) { toast('Invalid API key.','error'); return; }
+  localStorage.setItem('enginex_apikey', k);
+  apiKey = k;
+  document.getElementById('apiKeyDisplay').textContent = k.slice(0,18) + '…';
+  document.getElementById('modelBadge').textContent = 'Claude AI';
+  toast('API key updated!','success');
+}
+
+// ══════════════════════════════════════════ APP INIT
+function initApp() {
+  const d = currentUser.data;
+  appData = { topics:d.topics, tests:d.tests, xp:d.xp, avgScore:d.avgScore, streak:d.streak };
+
+  const name = currentUser.fname;
+  document.getElementById('sbAv').textContent = name[0].toUpperCase();
+  document.getElementById('sbName').textContent = name + ' ' + currentUser.lname;
+  const lvl = Math.floor(appData.xp / 1000) + 1;
+  document.getElementById('sbRole').textContent = `Level ${lvl} · ${currentUser.branch.split(' ')[0]}`;
+
+  const h = new Date().getHours();
+  const greet = h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  document.getElementById('wbGreet').textContent = `${greet}, ${name}! 👾`;
+  document.getElementById('streakCount').textContent = appData.streak;
+  document.getElementById('statTopics').textContent = appData.topics;
+  document.getElementById('statTests').textContent = appData.tests;
+  document.getElementById('statXP').textContent = appData.xp.toLocaleString();
+  document.getElementById('statScore').textContent = appData.avgScore + '%';
+
+  // Subject bars
+  const pcts = {python:75,javascript:58,java:45,cpp:38,dsa:82,dbms:60,os:50,cn:42};
+  const container = document.getElementById('langBars');
+  container.innerHTML = '';
+  SUBJECTS.slice(0,6).forEach(s => {
+    const pct = pcts[s.id]||50;
+    container.innerHTML += `
+      <div class="subj-row">
+        <div class="subj-ico">${s.ico}</div>
+        <div class="subj-info">
+          <div class="subj-nm">${s.nm}<span style="color:${s.color}">${pct}%</span></div>
+          <div class="subj-bar"><div class="subj-fill" style="width:0%;background:${s.color}" data-w="${pct}%"></div></div>
+        </div>
+      </div>`;
+  });
+  setTimeout(() => document.querySelectorAll('.subj-fill').forEach(e => e.style.width = e.dataset.w), 120);
+
+  // Recent Activity
+  const acts = currentUser.data.activity;
+  document.getElementById('recentAct').innerHTML = acts.map(a => {
+    const col = a.score>=80?'var(--green)':a.score>=60?'var(--yellow)':a.type==='Chat'?'var(--cyan)':'var(--red)';
+    const sc = a.type==='Chat' ? '+30 XP' : a.score+'%';
+    return `<div class="act-item">
+      <div class="act-dot" style="background:${col}"></div>
+      <div style="flex:1"><div class="act-label">${a.subj}</div><div class="act-meta">${a.date} · ${a.type}</div></div>
+      <div class="act-score" style="color:${col}">${sc}</div>
+    </div>`;
+  }).join('');
+
+  // Profile
+  document.getElementById('profAv').textContent = name[0].toUpperCase();
+  document.getElementById('profName').textContent = name + ' ' + currentUser.lname;
+  document.getElementById('profSub').textContent = `${currentUser.branch} · ${currentUser.year}`;
+  const xpInLevel = appData.xp % 1000;
+  document.getElementById('xpFrac').textContent = `${appData.xp} / ${(lvl)*1000}`;
+  document.getElementById('xpFill').style.width = (xpInLevel/10) + '%';
+  document.getElementById('profBadges').innerHTML = `
+    <span class="pbadge" style="background:rgba(0,229,255,.1);color:var(--cyan)">🎓 Level ${lvl}</span>
+    <span class="pbadge" style="background:rgba(255,123,53,.1);color:var(--orange)">🔥 ${appData.streak}-day</span>
+    <span class="pbadge" style="background:rgba(57,255,144,.1);color:var(--green)">⚡ ${appData.tests} Tests</span>`;
+  document.getElementById('profLangs').innerHTML = SUBJECTS.map(s=>`${s.ico} ${s.nm}`).join('<br>');
+  document.getElementById('profBadgeGrid').innerHTML = ['🥇','⚡','🔥','💯','🤖','🌲','🔒','🔒'].map((b,i)=>
+    `<span style="font-size:22px;opacity:${i<6?1:.25}">${b}</span>`).join('');
+  const stRow = (l,v,c) => `<div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--muted2)">${l}</span><span style="font-weight:700;color:${c||'inherit'}">${v}</span></div>`;
+  document.getElementById('profStats').innerHTML = stRow('Tests Completed',appData.tests)+stRow('Avg Score',appData.avgScore+'%')+stRow('Topics Mastered',appData.topics)+stRow('Best Subject','DSA','var(--cyan)')+stRow('Total XP',appData.xp.toLocaleString());
+
+  // Quiz subjects
+  document.getElementById('qSubjGrid').innerHTML = SUBJECTS.map(s => `
+    <div class="qsubj-card ${s.id==='dsa'?'sel':''}" onclick="pickSubj(this,'${s.id}')">
+      <div class="qs-ico">${s.ico}</div>
+      <div class="qs-nm">${s.nm}</div>
+      <div class="qs-cnt">${s.topics} topics</div>
+    </div>`).join('');
+
+  // Quick topic chips
+  document.getElementById('topicChips').innerHTML = QUICK_TOPICS.map(t => `
+    <button class="topic-chip" onclick="askTopic('${t.q.replace(/'/g,"\\'")}')">
+      <span class="tc-lang">[${t.lang}]</span>${t.q.length>35 ? t.q.slice(0,35)+'…':t.q}
+    </button>`).join('');
+
+  // Settings API key display
+  document.getElementById('apiKeyDisplay').textContent = apiKey ? apiKey.slice(0,18)+'…' : 'No key saved';
+
+  // Leaderboard
+  initLeaderboard();
+
+  // Progress
+  initProgress();
+
+  // Roadmap
+  initRoadmap();
+
+  // Auto-restore session bar
+  document.getElementById('lbStreak').textContent = appData.streak;
+  document.getElementById('lbXP').textContent = appData.xp.toLocaleString();
+}
+
+// ══════════════════════════════════════════ NAVIGATION
+const panelTitles = {
+  dashboard:['Dashboard','Welcome back 👋'],
+  tutor:['AI Tutor','Powered by Claude · Engineering focused'],
+  quiz:['Mock Tests','10 Questions · Timer · Instant feedback'],
+  roadmap:['Learning Roadmaps','Step-by-step curriculum paths'],
+  progress:['My Progress','Analytics & performance tracking'],
+  leaderboard:['Leaderboard','Rankings · Your position'],
+  profile:['Profile','Your engineering journey'],
+  settings:['Settings','Account & preferences'],
+};
+
+function goPanel(id, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  const t = panelTitles[id]||[id,''];
+  document.getElementById('pgTitle').textContent = t[0];
+  document.getElementById('pgSub').textContent = t[1];
+}
+
+// ══════════════════════════════════════════ AI TUTOR
+function chatKey(e) {
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendMsg(); }
+}
+
+async function sendMsg() {
+  const inp = document.getElementById('chatInp');
+  const txt = inp.value.trim();
+  if(!txt) return;
+  inp.value = '';
+  addMsg('user', txt);
+  document.getElementById('sendBtn').disabled = true;
+  const cnt = parseInt(document.getElementById('msgCount').textContent) + 1;
+  document.getElementById('msgCount').textContent = cnt;
+
+  // Typing
+  const tid = 'typing_'+Date.now();
+  document.getElementById('chatMsgs').insertAdjacentHTML('beforeend',
+    `<div class="msg ai" id="${tid}"><div class="msg-lbl">AI Tutor</div><div class="msg-bub"><div class="typing-dots"><span></span><span></span><span></span></div></div></div>`);
+  scrollChat();
+
+  let reply;
+  if(apiKey) {
+    try {
+      chatHistory.push({role:'user',content:txt});
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:1000,
+          system:`You are EngineX AI — a brilliant engineering tutor for CS/Engineering students. 
+You help with Python, Java, JavaScript, C++, DSA, DBMS, Operating Systems, Computer Networks, and Discrete Mathematics.
+Format code blocks with triple backticks and the language name.
+Be concise, use bullet points, and always give a practical code example when relevant.
+Address the student directly and encouragingly.`,
+          messages: chatHistory
+        })
+      });
+      const data = await res.json();
+      if(data.error) throw new Error(data.error.message);
+      reply = data.content[0].text;
+      chatHistory.push({role:'assistant',content:reply});
+    } catch(err) {
+      reply = `⚠️ API Error: ${err.message}. Check your API key in Settings.`;
+    }
+  } else {
+    reply = getDemoResponse(txt);
+  }
+
+  document.getElementById(tid)?.remove();
+  addMsg('ai', formatAIMsg(reply));
+  document.getElementById('sendBtn').disabled = false;
+
+  const xp = parseInt(document.getElementById('xpCount').textContent.replace('+','')) + 15;
+  document.getElementById('xpCount').textContent = '+'+xp;
+  scrollChat();
+}
+
+function formatAIMsg(text) {
+  // Format code blocks
+  text = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (_, lang, code) =>
+    `<div class="code-lang">${lang||'code'}</div><pre><code>${escHtml(code.trim())}</code></pre>`);
+  text = text.replace(/`([^`]+)`/g, '<code style="font-family:var(--mono);background:rgba(0,229,255,.08);padding:1px 5px;border-radius:3px;color:var(--cyan)">$1</code>');
+  text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  text = text.replace(/\n/g, '<br>');
+  return text;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function addMsg(role, html) {
+  const el = document.createElement('div');
+  el.className = `msg ${role}`;
+  el.innerHTML = `<div class="msg-lbl">${role==='ai'?'AI Tutor':'You'}</div><div class="msg-bub">${html}</div>`;
+  document.getElementById('chatMsgs').appendChild(el);
+  scrollChat();
+}
+
+function scrollChat() {
+  const m = document.getElementById('chatMsgs');
+  m.scrollTop = m.scrollHeight;
+}
+
+function askTopic(q) {
+  document.getElementById('chatInp').value = q;
+  sendMsg();
+  goPanel('tutor', document.querySelectorAll('.nav-item')[1]);
+}
+
+function getDemoResponse(q) {
+  const ql = q.toLowerCase();
+  if(ql.includes('python') || ql.includes('decorator')) return `**Python Decorators** 🐍\n\nDecorators wrap a function to add behaviour without modifying it.\n\n\`\`\`python\ndef timer(func):\n    import time\n    def wrapper(*args, **kwargs):\n        start = time.time()\n        result = func(*args, **kwargs)\n        print(f"Ran in {time.time()-start:.4f}s")\n        return result\n    return wrapper\n\n@timer\ndef slow_function():\n    time.sleep(0.5)\n\nslow_function()  # Ran in 0.5001s\`\`\`\n\nKey points:\n• A decorator is a **higher-order function**\n• \`@decorator\` is syntactic sugar for \`func = decorator(func)\`\n• Common uses: logging, authentication, caching\n\n> 💡 Add your Anthropic API key in Settings for real-time answers!`;
+  if(ql.includes('bigo')||ql.includes('complexity')||ql.includes('o(n)')) return `**Big O Notation** 🌲\n\n| Notation | Name | Example |\n|---|---|---|\n| O(1) | Constant | Array index access |\n| O(log n) | Logarithmic | Binary Search |\n| O(n) | Linear | Linear Search |\n| O(n log n) | Linearithmic | Merge Sort |\n| O(n²) | Quadratic | Bubble Sort |\n\n\`\`\`python\n# O(n²) - Nested loops\nfor i in range(n):\n    for j in range(n):  # Bad for large n!\n        ...\n\n# O(n log n) - Merge Sort\ndef merge_sort(arr):\n    if len(arr) <= 1: return arr\n    mid = len(arr) // 2\n    L = merge_sort(arr[:mid])\n    R = merge_sort(arr[mid:])\n    return merge(L, R)\`\`\`\n\n> 💡 Add your API key for live AI responses!`;
+  if(ql.includes('sql')||ql.includes('join')||ql.includes('dbms')) return `**SQL JOINs** 🗄️\n\n\`\`\`sql\n-- INNER JOIN: only matching rows\nSELECT e.name, d.dept_name\nFROM employees e\nINNER JOIN departments d ON e.dept_id = d.id;\n\n-- LEFT JOIN: all from left table\nSELECT e.name, d.dept_name\nFROM employees e\nLEFT JOIN departments d ON e.dept_id = d.id;\n\n-- GROUP BY with aggregate\nSELECT dept_id, COUNT(*) as count, AVG(salary)\nFROM employees\nGROUP BY dept_id\nHAVING COUNT(*) > 5;\`\`\`\n\nTypes:\n• **INNER** — matching rows only\n• **LEFT** — all left + matching right\n• **RIGHT** — all right + matching left\n• **FULL OUTER** — all rows from both\n\n> 💡 Add your API key for live responses!`;
+  if(ql.includes('java')||ql.includes('oop')||ql.includes('polymorphism')) return `**OOP Pillars in Java** ☕\n\n\`\`\`java\n// Encapsulation\nclass BankAccount {\n    private double balance; // hidden!\n    public void deposit(double amt) {\n        if(amt > 0) balance += amt;\n    }\n}\n\n// Inheritance + Polymorphism\nabstract class Shape {\n    abstract double area();\n}\nclass Circle extends Shape {\n    double r;\n    Circle(double r){ this.r = r; }\n    @Override\n    double area(){ return Math.PI * r * r; }\n}\`\`\`\n\n4 Pillars: **Encapsulation** · **Abstraction** · **Inheritance** · **Polymorphism**\n\n> 💡 Add your Anthropic API key for live Claude responses!`;
+  return `Great question! 👾 Here's what you need to know:\n\n**Key Concepts:**\n• This is a core engineering topic covered in interviews\n• Understanding fundamentals beats memorizing solutions\n• Practice implementation regularly\n\n> 💡 **Add your Anthropic API key** in Settings or the sidebar panel to get real Claude AI responses with detailed code examples tailored exactly to your question!`;
+}
+
+// ══════════════════════════════════════════ QUIZ
+let selectedSubj = 'dsa';
+let selectedDiff = 'Medium';
+let shuffledQ = [];
+
+function pickSubj(el, id) {
+  document.querySelectorAll('.qsubj-card').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedSubj = id;
+}
+
+function pickDiff(btn, d) {
+  document.querySelectorAll('.diff-btn').forEach(b => {
+    b.className = 'diff-btn';
+    b.textContent = b.textContent.replace(' ✓','');
+  });
+  const cls = d==='Easy'?'sel-e':d==='Medium'?'sel-m':'sel-h';
+  btn.className = `diff-btn ${cls}`;
+  btn.textContent = d + ' ✓';
+  selectedDiff = d;
+}
+
+function startQuiz() {
+  quizState = { subj:selectedSubj, diff:selectedDiff, q:0, score:0, timer:null, timerVal:35, answered:false };
+  shuffledQ = [...(QUIZ_BANK[selectedSubj]||QUIZ_BANK.dsa)].sort(()=>Math.random()-.5).slice(0,10);
+  document.getElementById('quizPick').classList.add('hidden');
+  document.getElementById('quizActive').classList.remove('hidden');
+  renderQ();
+}
+
+function renderQ() {
+  const q = shuffledQ[quizState.q];
+  quizState.answered = false;
+  document.getElementById('qNum').textContent = quizState.q+1;
+  document.getElementById('qPF').style.width = ((quizState.q+1)/10*100)+'%';
+  document.getElementById('btnNext').disabled = true;
+  document.getElementById('qFb').textContent = '';
+
+  const subj = SUBJECTS.find(s=>s.id===quizState.subj)||SUBJECTS[4];
+  document.getElementById('qPills').innerHTML = `
+    <span class="lang-pill" style="background:rgba(0,229,255,.08);border-color:rgba(0,229,255,.25);color:var(--cyan)">${subj.ico} ${subj.nm}</span>
+    <span class="lang-pill" style="background:rgba(189,147,249,.08);border-color:rgba(189,147,249,.25);color:var(--purple)">${selectedDiff}</span>`;
+
+  document.getElementById('qText').innerHTML = q.q.replace(/`([^`]+)`/g,'<code>$1</code>');
+  const ltrs = ['A','B','C','D'];
+  document.getElementById('qOpts').innerHTML = q.opts.map((o,i) =>
+    `<div class="q-opt" onclick="pickAns(this,${i})">
+      <div class="q-opt-ltr">${ltrs[i]}</div>
+      ${o.replace(/`([^`]+)`/g,'<code>$1</code>')}
+    </div>`).join('');
+
+  clearInterval(quizState.timer);
+  quizState.timerVal = selectedDiff==='Easy'?45:selectedDiff==='Medium'?35:25;
+  document.getElementById('qTimer').textContent = `⏱ ${quizState.timerVal}s`;
+  quizState.timer = setInterval(() => {
+    quizState.timerVal--;
+    document.getElementById('qTimer').textContent = `⏱ ${quizState.timerVal}s`;
+    if(quizState.timerVal<=0){ clearInterval(quizState.timer); if(!quizState.answered) timeUp(); }
+  }, 1000);
+}
+
+function pickAns(el, idx) {
+  if(quizState.answered) return;
+  quizState.answered = true;
+  clearInterval(quizState.timer);
+  const correct = shuffledQ[quizState.q].c;
+  const exp = shuffledQ[quizState.q].exp;
+  document.querySelectorAll('.q-opt').forEach((o,i) => {
+    if(i===correct) o.classList.add('correct');
+    else if(i===idx && i!==correct) o.classList.add('wrong');
+  });
+  if(idx===correct){ quizState.score++; document.getElementById('qFb').innerHTML = `<span style="color:var(--green)">✓ Correct! ${exp}</span>`; }
+  else document.getElementById('qFb').innerHTML = `<span style="color:var(--red)">✗ Wrong. ${exp}</span>`;
+  document.getElementById('btnNext').disabled = false;
+}
+
+function timeUp() {
+  quizState.answered = true;
+  const correct = shuffledQ[quizState.q].c;
+  document.querySelectorAll('.q-opt')[correct]?.classList.add('correct');
+  document.getElementById('qFb').innerHTML = `<span style="color:var(--yellow)">⏱ Time's up! Correct: ${shuffledQ[quizState.q].opts[correct]}</span>`;
+  document.getElementById('btnNext').disabled = false;
+}
+
+function nextQ() {
+  quizState.q++;
+  if(quizState.q >= 10) showRes();
+  else renderQ();
+}
+
+function showRes() {
+  clearInterval(quizState.timer);
+  document.getElementById('quizActive').classList.add('hidden');
+  document.getElementById('quizRes').classList.remove('hidden');
+  const pct = Math.round(quizState.score/10*100);
+  const xp = quizState.score * 20;
+  document.getElementById('resPct').textContent = pct+'%';
+  document.getElementById('resRing').style.setProperty('--sdeg', (pct*3.6)+'deg');
+  document.getElementById('resC').textContent = quizState.score;
+  document.getElementById('resW').textContent = 10-quizState.score;
+  document.getElementById('resXP').textContent = '+'+xp;
+  const msgs = [[80,'Outstanding! 🏆','Top-tier performance. Keep going!'],
+                [60,'Good Work! 👍','Review the topics you missed.'],
+                [0,'Keep Practicing! 💪','Every attempt builds knowledge.']];
+  for(const [min,title,msg] of msgs){
+    if(pct>=min){ document.getElementById('resTitle').textContent=title; document.getElementById('resMsg').textContent=msg; break; }
+  }
+  // Save to user data
+  const users = JSON.parse(localStorage.getItem('enginex_users')||'{}');
+  if(users[currentUser.email]) {
+    users[currentUser.email].data.tests++;
+    users[currentUser.email].data.xp += xp;
+    const scores = users[currentUser.email].data.activity;
+    const subj = SUBJECTS.find(s=>s.id===quizState.subj);
+    scores.unshift({subj:`${subj.nm} Mock Test`,score:pct,date:'Just now',type:'Test'});
+    localStorage.setItem('enginex_users', JSON.stringify(users));
+  }
+}
+
+function resetQuiz() {
+  document.getElementById('quizRes').classList.add('hidden');
+  document.getElementById('quizPick').classList.remove('hidden');
+}
+
+// ══════════════════════════════════════════ ROADMAP
+let activeRoadmapLang = 'python';
+
+function initRoadmap() {
+  const ids = Object.keys(ROADMAPS);
+  document.getElementById('langTabs').innerHTML = ids.map(id => `
+    <button class="lang-tab ${id===activeRoadmapLang?'active':''}" onclick="switchRoadmap('${id}',this)">${ROADMAPS[id].label}</button>
+  `).join('') + SUBJECTS.filter(s=>!ids.includes(s.id)).map(s=>
+    `<button class="lang-tab" style="opacity:.5">${s.ico} ${s.nm}</button>`).join('');
+  renderRoadmap();
+}
+
+function switchRoadmap(id, btn) {
+  activeRoadmapLang = id;
+  document.querySelectorAll('.lang-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderRoadmap();
+}
+
+function renderRoadmap() {
+  const rm = ROADMAPS[activeRoadmapLang];
+  if(!rm) { document.getElementById('roadmapContent').innerHTML = '<div style="color:var(--muted2);text-align:center;padding:40px">Roadmap coming soon! 🚧</div>'; return; }
+  let html = `<div class="roadmap-track">`;
+  rm.phases.forEach((p, i) => {
+    const dotCls = p.done ? 'done' : '';
+    html += `<div class="rm-phase" style="position:relative">
+      <div class="rm-dot ${dotCls}" style="${p.done?`background:${rm.color};border-color:${rm.color}`:p.active?`border-color:${rm.color};color:${rm.color}`:''}">${i+1}</div>
+      <div class="rm-header">
+        <div class="rm-phase-title">${p.n}</div>
+        ${p.done?`<span class="lang-pill" style="background:rgba(57,255,144,.08);border-color:rgba(57,255,144,.2);color:var(--green);font-size:10px">✓ Done</span>`:p.active?`<span class="lang-pill" style="background:rgba(0,229,255,.08);border-color:rgba(0,229,255,.2);color:var(--cyan);font-size:10px">In Progress</span>`:''}
+      </div>
+      <div class="rm-topics">
+        ${p.topics.map(t => `<span class="rm-topic ${p.done?'done-t':p.active?'active-t':'locked-t'}">${t}</span>`).join('')}
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  document.getElementById('roadmapContent').innerHTML = html;
+}
+
+// ══════════════════════════════════════════ PROGRESS
+function initProgress() {
+  const hrs = [30,65,45,80,55,70,35];
+  document.getElementById('weekChart').innerHTML = hrs.map((h,i) =>
+    `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+      <div style="font-family:var(--mono);font-size:9px;color:var(--muted2)">${h}m</div>
+      <div style="width:100%;height:${h}%;background:${i===2?'var(--cyan)':'rgba(0,229,255,.15)'};border-radius:3px;transition:height .5s"></div>
+    </div>`).join('');
+
+  const hist = [{s:'DSA Mock Test',sc:88,d:'Today'},{s:'Python Functions',sc:76,d:'Yesterday'},{s:'DBMS SQL Joins',sc:68,d:'2 days ago'},{s:'OS - Scheduling',sc:92,d:'3 days ago'}];
+  document.getElementById('scoreHist').innerHTML = hist.map(h => {
+    const c = h.sc>=80?'var(--green)':h.sc>=60?'var(--yellow)':'var(--red)';
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px;background:rgba(255,255,255,.02);border-radius:8px;margin-bottom:7px">
+      <div><div style="font-size:13px;font-weight:600">${h.s}</div><div style="font-family:var(--mono);font-size:10px;color:var(--muted)">${h.d}</div></div>
+      <div style="font-family:var(--mono);font-size:15px;font-weight:700;color:${c}">${h.sc}%</div>
+    </div>`;
+  }).join('');
+
+  const pcts={python:75,javascript:58,java:45,cpp:38,dsa:82,dbms:60,os:50,cn:42};
+  document.getElementById('detailProg').innerHTML = SUBJECTS.map(s => {
+    const p = pcts[s.id]||50;
+    return `<div style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+        <div style="display:flex;align-items:center;gap:8px"><span>${s.ico}</span><span style="font-size:13px;font-weight:600">${s.nm}</span></div>
+        <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:${s.color}">${p}%</span>
+      </div>
+      <div style="height:7px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden">
+        <div style="width:${p}%;height:100%;background:${s.color};border-radius:4px;transition:width 1s ease"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════ LEADERBOARD
+function initLeaderboard() {
+  const leaders = [
+    {n:'Priya Menon',i:'P',xp:7840,streak:28,branch:'CSE',g:'135deg,#ff6eb4,var(--purple)'},
+    {n:'Rahul Verma',i:'R',xp:7210,streak:21,branch:'IT',g:'135deg,#fbbf24,var(--orange)'},
+    {n:'Aditya Nair',i:'A',xp:5600,streak:15,branch:'CSE',g:'135deg,var(--cyan),#7dcfff'},
+    {n:currentUser?.fname+' '+(currentUser?.lname||''),i:(currentUser?.fname||'Y')[0],xp:appData.xp,streak:appData.streak,branch:currentUser?.branch?.split(' ')[0]||'CSE',isMe:true,g:'135deg,var(--cyan),var(--purple)'},
+    {n:'Sneha Iyer',i:'S',xp:4200,streak:9,branch:'DS',g:'135deg,var(--green),var(--cyan)'},
+    {n:'Vikram Shah',i:'V',xp:3900,streak:6,branch:'IT',g:'135deg,var(--orange),var(--red)'},
+    {n:'Neha Krishnan',i:'N',xp:3500,streak:4,branch:'ECE',g:'135deg,var(--purple),var(--pink)'},
+  ];
+  const medals = ['🥇','🥈','🥉'];
+  document.getElementById('leaderList').innerHTML = leaders.map((l,i) => `
+    <div style="display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;margin-bottom:3px;
+    background:${l.isMe?'rgba(0,229,255,.05)':'transparent'};border:${l.isMe?'1px solid rgba(0,229,255,.15)':'1px solid transparent'};transition:background .15s;">
+      <div style="width:26px;text-align:center;font-family:var(--mono);font-size:${i<3?'16':'12'}px;font-weight:700;
+      color:${i===0?'var(--yellow)':i===1?'#c0c0c0':i===2?'#cd7f32':'var(--muted2)'}">
+        ${i<3?medals[i]:'#'+(i+1)}</div>
+      <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(${l.g});
+      display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--bg);flex-shrink:0">${l.i}</div>
+      <div style="flex:1"><div style="font-size:13px;font-weight:600">${l.n}${l.isMe?' (You)':''}</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--muted2)">${l.branch} · 🔥${l.streak}</div></div>
+      <div style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--cyan)">${l.xp.toLocaleString()} XP</div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════ TOAST
+function toast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════════ AUTO LOGIN
+(function autoLogin(){
+  const saved = localStorage.getItem('enginex_session');
+  if(saved){
+    const users = JSON.parse(localStorage.getItem('enginex_users')||'{}');
+    if(users[saved]){
+      setTimeout(()=>launchApp(users[saved]), 100);
+    }
+  }
+  // Pre-fill API key if saved
+  const k = localStorage.getItem('enginex_apikey');
+  if(k) document.getElementById('apiKeyInput').value = k;
+})();
+</script>
+</body>
 </html>
