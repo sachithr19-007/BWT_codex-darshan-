@@ -92,23 +92,6 @@ npm run dev
 
 ---
 
-## 📁 Repository Structure
-
-```
-BWT_codex-darshan-/
-├── architecture-diagram.html   # Interactive system architecture diagram
-├── architecture-diagram.png    # Architecture diagram image
-├── README.md                   # Project overview (you are here)
-├── src/
-│   ├── components/             # React UI components
-│   ├── pages/                  # Dashboard pages
-│   └── api/                    # Backend API routes
-├── public/                     # Static assets
-└── .env.example                # Environment variable template
-```
-
----
-
 ## 🎯 Demo Flow
 
 1. User selects a **subject** from the sidebar
