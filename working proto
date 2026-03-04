@@ -880,115 +880,75 @@ nav::-webkit-scrollbar-thumb{background:var(--border2);}
 </div>
 
 <script>
-// ══════════════════════════════════ DATA
-
+// ══════════════════════════════════════════ CONSTANTS
 const SUBJECTS = [
-  {id:'python',nm:'Python',ico:'🐍',color:'var(--green)',topics:56},
-  {id:'javascript',nm:'JavaScript',ico:'⚡',color:'var(--yellow)',topics:48},
-  {id:'java',nm:'Java',ico:'☕',color:'var(--orange)',topics:44},
-  {id:'cpp',nm:'C++',ico:'🔷',color:'var(--cyan)',topics:40},
-  {id:'dsa',nm:'DSA',ico:'🌲',color:'var(--purple)',topics:60},
-  {id:'dbms',nm:'DBMS',ico:'🗄️',color:'var(--pink)',topics:36},
-  {id:'os',nm:'Operating Systems',ico:'⚙️',color:'var(--red)',topics:32},
-  {id:'cn',nm:'Computer Networks',ico:'🌐',color:'#7dcfff',topics:28},
+  {id:'python',   nm:'Python',            ico:'🐍', color:'var(--green)',  topics:56},
+  {id:'javascript',nm:'JavaScript',       ico:'⚡', color:'var(--yellow)', topics:48},
+  {id:'java',     nm:'Java',              ico:'☕', color:'var(--orange)', topics:44},
+  {id:'cpp',      nm:'C++',              ico:'🔷', color:'var(--cyan)',   topics:40},
+  {id:'dsa',      nm:'DSA',              ico:'🌲', color:'var(--purple)', topics:60},
+  {id:'dbms',     nm:'DBMS',             ico:'🗄️', color:'var(--pink)',   topics:36},
+  {id:'os',       nm:'Operating Systems',ico:'⚙️', color:'var(--red)',    topics:32},
+  {id:'cn',       nm:'Computer Networks',ico:'🌐', color:'#7dcfff',       topics:28},
 ];
 
-const QUIZ_BANK = {
+// Fallback questions (no API key scenario)
+const FALLBACK_Q = {
   python:[
-    {q:"What is the output of `print(type([]))`?",opts:["<class 'list'>","<class 'array'>","list","[]"],c:0,exp:"type([]) returns the class 'list' in Python."},
-    {q:"Which keyword is used for function definition in Python?",opts:["function","def","func","define"],c:1,exp:"Python uses 'def' to define functions."},
-    {q:"What does `len('hello')` return?",opts:["4","5","6","Error"],c:1,exp:"The string 'hello' has 5 characters."},
-    {q:"Which of these is a mutable data type in Python?",opts:["tuple","string","list","int"],c:2,exp:"Lists are mutable; tuples and strings are immutable."},
-    {q:"What is the output of `2 ** 3` in Python?",opts:["6","8","9","5"],c:1,exp:"** is the power operator. 2³ = 8."},
-    {q:"Which method removes the last element from a list?",opts:[".remove()","del","pop()","clear()"],c:2,exp:"list.pop() removes and returns the last element."},
-    {q:"What is a lambda function?",opts:["A recursive function","An anonymous function","A generator","A decorator"],c:1,exp:"Lambda creates small anonymous one-liner functions."},
-    {q:"What does `range(5)` produce?",opts:["0,1,2,3,4,5","1,2,3,4,5","0,1,2,3,4","1,2,3,4"],c:2,exp:"range(5) generates 0 through 4 (exclusive of 5)."},
-    {q:"Which is NOT a Python built-in data structure?",opts:["dict","set","array","list"],c:2,exp:"array is not built-in; you need to import it from array module."},
-    {q:"What is 'self' in a Python class?",opts:["A keyword","A reference to the current instance","A global variable","A static method"],c:1,exp:"'self' refers to the instance of the class."},
+    {q:"What keyword defines a function in Python?",opts:["function","def","fn","lambda"],c:1,exp:"Python uses 'def' to define named functions."},
+    {q:"Output of `type([])`?",opts:["<class 'array'>","<class 'list'>","list","[]"],c:1,exp:"type([]) returns <class 'list'>."},
+    {q:"Which is mutable?",opts:["tuple","str","list","int"],c:2,exp:"Lists are mutable; tuples/strings are immutable."},
+    {q:"Output of `2 ** 10`?",opts:["20","100","512","1024"],c:3,exp:"2¹⁰ = 1024."},
+    {q:"What does `pop()` do on a list?",opts:["Removes first","Removes last","Clears all","Raises error"],c:1,exp:"list.pop() removes and returns the last element."},
   ],
   javascript:[
-    {q:"Which keyword declares a block-scoped variable in JS?",opts:["var","let","const","all of these"],c:1,exp:"'let' is block-scoped. 'var' is function-scoped, 'const' is block-scoped but immutable."},
-    {q:"What does `===` check in JavaScript?",opts:["Value only","Type only","Value and Type","Reference"],c:2,exp:"=== is strict equality; checks both value and type."},
-    {q:"What is the output of `typeof null`?",opts:["null","undefined","object","error"],c:2,exp:"This is a known JS bug — typeof null returns 'object'."},
-    {q:"Which method converts JSON string to object?",opts:["JSON.parse()","JSON.stringify()","JSON.decode()","JSON.convert()"],c:0,exp:"JSON.parse() converts a JSON string into a JavaScript object."},
-    {q:"What is a closure in JavaScript?",opts:["A loop","A function with access to its outer scope","An object method","An async function"],c:1,exp:"A closure is a function that retains access to its enclosing scope."},
-    {q:"What does `Array.prototype.map()` return?",opts:["undefined","The same array","A new array","A number"],c:2,exp:"map() creates a new array with the results of calling a function."},
-    {q:"What is the event loop in JavaScript?",opts:["A for loop","A mechanism handling async operations","A type of array","A CSS feature"],c:1,exp:"The event loop allows JS to perform non-blocking I/O."},
-    {q:"Which is NOT a falsy value in JS?",opts:["0","''","[]","null"],c:2,exp:"An empty array [] is truthy in JavaScript."},
-    {q:"What does `Promise.all()` do?",opts:["Runs promises sequentially","Resolves when ALL promises resolve","Resolves when ANY resolves","Ignores errors"],c:1,exp:"Promise.all() waits for all promises to fulfill or any to reject."},
-    {q:"What is the prototype chain?",opts:["An array of methods","Inheritance mechanism in JS","A design pattern","A build tool"],c:1,exp:"JavaScript uses prototypal inheritance via the prototype chain."},
+    {q:"What does `===` check?",opts:["Value only","Type only","Value AND type","Reference"],c:2,exp:"=== is strict equality — checks both value and type."},
+    {q:"`typeof null` returns?",opts:["null","undefined","object","boolean"],c:2,exp:"A JS quirk — typeof null returns 'object'."},
+    {q:"Which is NOT falsy?",opts:["0","''","[]","undefined"],c:2,exp:"An empty array [] is truthy in JavaScript."},
+    {q:"What does `Promise.all()` do?",opts:["Runs sequentially","Resolves when ALL resolve","Resolves when ANY resolves","Ignores rejections"],c:1,exp:"Promise.all waits for ALL promises to fulfill."},
+    {q:"What is a closure?",opts:["A loop","A function retaining outer scope","An async fn","An IIFE"],c:1,exp:"A closure captures and retains access to its enclosing scope."},
   ],
   dsa:[
-    {q:"What is the time complexity of binary search?",opts:["O(n)","O(log n)","O(n log n)","O(1)"],c:1,exp:"Binary search halves the search space each step → O(log n)."},
-    {q:"Which data structure uses LIFO order?",opts:["Queue","Stack","Linked List","Tree"],c:1,exp:"Stack (Last In First Out) — push/pop operations."},
-    {q:"What is the worst-case time complexity of quicksort?",opts:["O(n log n)","O(n²)","O(n)","O(log n)"],c:1,exp:"Quicksort worst case (already sorted with bad pivot) is O(n²)."},
-    {q:"In a Binary Search Tree, where is the largest element?",opts:["Root","Leftmost node","Rightmost node","Random"],c:2,exp:"In a BST, all right children are greater, so the max is the rightmost node."},
-    {q:"What is the space complexity of merge sort?",opts:["O(1)","O(log n)","O(n)","O(n²)"],c:2,exp:"Merge sort requires O(n) auxiliary space for merging."},
-    {q:"Which traversal visits root LAST in a binary tree?",opts:["Preorder","Inorder","Postorder","Level order"],c:2,exp:"Postorder: Left → Right → Root."},
-    {q:"What is a hash collision?",opts:["Two equal keys","Two different keys map to same bucket","A hash function error","A null pointer"],c:1,exp:"A collision occurs when two different keys hash to the same index."},
-    {q:"What algorithm finds the shortest path in a weighted graph?",opts:["BFS","DFS","Dijkstra's","Kruskal's"],c:2,exp:"Dijkstra's algorithm finds shortest paths from a source vertex."},
-    {q:"What is the height of a balanced BST with n nodes?",opts:["O(n)","O(log n)","O(√n)","O(1)"],c:1,exp:"A balanced BST has height O(log n)."},
-    {q:"Which sorting algorithm is stable AND O(n log n)?",opts:["Quicksort","Heapsort","Merge sort","Selection sort"],c:2,exp:"Merge sort is stable and always O(n log n)."},
-  ],
-  os:[
-    {q:"What is a deadlock?",opts:["Infinite loop","Circular wait for resources","Memory leak","Race condition"],c:1,exp:"Deadlock: processes wait in a circular chain for resources held by each other."},
-    {q:"What is the role of the PCB (Process Control Block)?",opts:["Memory management","Stores process metadata","Handles I/O","CPU scheduling"],c:1,exp:"PCB stores all information about a process: state, registers, PID, etc."},
-    {q:"Which page replacement algorithm is optimal (theoretical)?",opts:["FIFO","LRU","OPT (Belady's)","Random"],c:2,exp:"OPT replaces the page not needed for the longest time — optimal but impractical."},
-    {q:"What is thrashing in OS?",opts:["CPU overuse","Excessive paging causing low CPU utilization","Disk failure","Memory corruption"],c:1,exp:"Thrashing: too many page faults → OS spends more time paging than executing."},
-    {q:"What is a semaphore used for?",opts:["CPU scheduling","Process synchronization","Memory allocation","Disk I/O"],c:1,exp:"Semaphores are used to control access to shared resources — synchronization."},
-    {q:"Which scheduling algorithm may cause starvation?",opts:["Round Robin","FCFS","Priority Scheduling","SJF"],c:2,exp:"Priority Scheduling can starve low-priority processes indefinitely."},
-    {q:"What is virtual memory?",opts:["RAM","Disk space used as RAM","Cache","Register"],c:1,exp:"Virtual memory allows processes to use more memory than physically available by using disk as RAM."},
-    {q:"What is a context switch?",opts:["Changing terminals","Saving/restoring CPU state when switching processes","Changing memory pages","Switching users"],c:1,exp:"A context switch saves the current process state and loads the next process state."},
-    {q:"What is the difference between process and thread?",opts:["None","Thread is lighter, shares process memory","Process is faster","Thread has its own memory"],c:1,exp:"Threads share the process's memory space; they are lighter-weight than processes."},
-    {q:"What does the fork() system call do?",opts:["Create a file","Create a copy of the current process","Kill a process","Allocate memory"],c:1,exp:"fork() creates a child process that is a duplicate of the parent."},
-  ],
-  dbms:[
-    {q:"What does ACID stand for in databases?",opts:["Atomic, Consistent, Isolated, Durable","Async, Consistent, Independent, Durable","Atomic, Concurrent, Isolated, Direct","All of the above"],c:0,exp:"ACID: Atomicity, Consistency, Isolation, Durability — key transaction properties."},
-    {q:"What is normalization?",opts:["Speeding up queries","Removing data redundancy","Encrypting data","Indexing tables"],c:1,exp:"Normalization organizes a database to reduce redundancy and improve integrity."},
-    {q:"What is a primary key?",opts:["Any column","A unique identifier for each row","A foreign reference","An index"],c:1,exp:"Primary key uniquely identifies each record in a table."},
-    {q:"What SQL keyword retrieves unique values?",opts:["UNIQUE","DISTINCT","DIFFERENT","ONLY"],c:1,exp:"SELECT DISTINCT removes duplicate rows from results."},
-    {q:"What is a JOIN in SQL?",opts:["Combining rows from two tables","Deleting duplicate rows","Adding a column","Sorting results"],c:0,exp:"JOIN combines rows from two or more tables based on a related column."},
-    {q:"What is the difference between WHERE and HAVING?",opts:["None","WHERE filters rows; HAVING filters groups","HAVING is for subqueries","WHERE is for GROUP BY"],c:1,exp:"WHERE filters rows before grouping; HAVING filters after GROUP BY."},
-    {q:"What is a foreign key?",opts:["A secondary index","A key referencing the primary key of another table","An encrypted key","A composite key"],c:1,exp:"A foreign key creates a link between two tables via the primary key."},
-    {q:"Which normal form removes transitive dependencies?",opts:["1NF","2NF","3NF","BCNF"],c:2,exp:"3NF eliminates transitive dependencies (non-key attributes depending on other non-key attributes)."},
-    {q:"What does GROUP BY do?",opts:["Sort rows","Group rows sharing a value for aggregate functions","Filter rows","Create indexes"],c:1,exp:"GROUP BY groups rows with the same values to apply aggregate functions."},
-    {q:"What is an index in a database?",opts:["A backup","A data structure that speeds up retrieval","A constraint","A trigger"],c:1,exp:"An index is a B-tree (or hash) structure that speeds up query lookups."},
-  ],
-  cn:[
-    {q:"How many layers does the OSI model have?",opts:["4","5","7","8"],c:2,exp:"OSI model has 7 layers: Physical, Data Link, Network, Transport, Session, Presentation, Application."},
-    {q:"Which protocol is used for reliable transmission?",opts:["UDP","TCP","IP","ICMP"],c:1,exp:"TCP (Transmission Control Protocol) provides reliable, ordered, error-checked delivery."},
-    {q:"What is the purpose of DNS?",opts:["Assign IP addresses","Translate domain names to IP addresses","Encrypt data","Route packets"],c:1,exp:"DNS resolves human-readable domain names (like google.com) to IP addresses."},
-    {q:"What is the subnet mask for a /24 network?",opts:["255.0.0.0","255.255.0.0","255.255.255.0","255.255.255.255"],c:2,exp:"/24 means 24 bits for network → 255.255.255.0"},
-    {q:"What layer does a router operate at?",opts:["Layer 1","Layer 2","Layer 3","Layer 4"],c:2,exp:"Routers work at Layer 3 (Network layer), forwarding packets based on IP."},
-    {q:"What is the difference between TCP and UDP?",opts:["None","TCP is reliable, UDP is faster but unreliable","UDP is reliable","TCP is faster"],c:1,exp:"TCP: reliable, connection-oriented. UDP: connectionless, faster, used for streaming."},
-    {q:"What is ARP used for?",opts:["IP to domain resolution","IP to MAC address resolution","Routing","Encryption"],c:1,exp:"ARP (Address Resolution Protocol) maps IP addresses to MAC addresses."},
-    {q:"Which HTTP method is idempotent?",opts:["POST","PUT","PATCH","DELETE"],c:1,exp:"PUT is idempotent — calling it multiple times produces the same result."},
-    {q:"What is a three-way handshake?",opts:["A DNS lookup","TCP connection establishment (SYN, SYN-ACK, ACK)","An SSL protocol","A routing protocol"],c:1,exp:"TCP uses SYN → SYN-ACK → ACK to establish a connection."},
-    {q:"What does HTTPS add over HTTP?",opts:["Speed","TLS/SSL encryption","Compression","Caching"],c:1,exp:"HTTPS uses TLS/SSL to encrypt data in transit."},
+    {q:"Time complexity of binary search?",opts:["O(n)","O(log n)","O(n²)","O(1)"],c:1,exp:"Binary search halves the space each step → O(log n)."},
+    {q:"LIFO data structure?",opts:["Queue","Stack","Linked List","Heap"],c:1,exp:"Stack is Last In First Out."},
+    {q:"Worst-case quicksort?",opts:["O(n log n)","O(n)","O(n²)","O(log n)"],c:2,exp:"Worst case (bad pivot on sorted array) is O(n²)."},
+    {q:"Space complexity of merge sort?",opts:["O(1)","O(log n)","O(n)","O(n²)"],c:2,exp:"Merge sort needs O(n) auxiliary space."},
+    {q:"Which traversal visits root last?",opts:["Preorder","Inorder","Postorder","Level order"],c:2,exp:"Postorder: Left → Right → Root."},
   ],
   java:[
-    {q:"What is the output of `System.out.println(10/3)` in Java?",opts:["3.33","3","4","Error"],c:1,exp:"Integer division in Java truncates the decimal. 10/3 = 3."},
-    {q:"Which keyword prevents method overriding?",opts:["static","abstract","final","private"],c:2,exp:"'final' methods cannot be overridden in subclasses."},
-    {q:"What is the difference between == and .equals() in Java?",opts:["None","== checks reference; .equals() checks value","== is for primitives only","equals() is faster"],c:1,exp:"== compares references (memory addresses); .equals() compares actual content."},
-    {q:"What is the purpose of the 'interface' keyword?",opts:["Create an object","Define a contract for classes","Create a database connection","Handle exceptions"],c:1,exp:"An interface defines a contract — abstract methods that implementing classes must provide."},
-    {q:"What is polymorphism?",opts:["Multiple inheritance","One interface, many forms","Data hiding","Encapsulation"],c:1,exp:"Polymorphism allows the same interface to be used for different underlying forms."},
-    {q:"Which collection allows duplicate elements?",opts:["Set","TreeSet","HashSet","List"],c:3,exp:"List (ArrayList, LinkedList) allows duplicates. Sets do not."},
-    {q:"What does 'static' mean for a class member?",opts:["It's private","It belongs to the class, not instances","It can't be modified","It's final"],c:1,exp:"Static members belong to the class itself, shared across all instances."},
-    {q:"What is garbage collection in Java?",opts:["Deleting files","Automatic memory management","A sorting algorithm","A design pattern"],c:1,exp:"JVM's garbage collector automatically frees memory of unreachable objects."},
-    {q:"What is the purpose of 'try-catch'?",opts:["Loop control","Exception handling","Type casting","Multithreading"],c:1,exp:"try-catch handles exceptions to prevent program crashes."},
-    {q:"What is an abstract class?",opts:["A class with no methods","A class that can't be instantiated directly","A final class","A static class"],c:1,exp:"Abstract classes define common structure but cannot be instantiated; subclasses implement abstract methods."},
+    {q:"Which prevents method overriding?",opts:["static","abstract","final","private"],c:2,exp:"'final' methods cannot be overridden."},
+    {q:"== vs .equals() in Java?",opts:["Same thing","== checks reference; equals() checks value","== is faster","equals() checks reference"],c:1,exp:"== compares memory addresses; .equals() compares content."},
+    {q:"What does 'static' mean?",opts:["Private member","Belongs to class not instances","Cannot be modified","Inherited only"],c:1,exp:"Static members belong to the class itself, shared across all instances."},
+    {q:"Purpose of try-catch?",opts:["Loop control","Exception handling","Type casting","Multithreading"],c:1,exp:"try-catch handles exceptions to prevent crashes."},
+    {q:"What is an abstract class?",opts:["Has no methods","Cannot be instantiated directly","Is always final","Is always static"],c:1,exp:"Abstract classes define structure but can't be instantiated; subclasses implement abstract methods."},
   ],
   cpp:[
-    {q:"What is a pointer in C++?",opts:["A data type","A variable that stores a memory address","An array","A reference"],c:1,exp:"A pointer holds the memory address of another variable."},
-    {q:"What does `new` keyword do in C++?",opts:["Creates a variable","Allocates memory on the heap","Allocates stack memory","Copies an object"],c:1,exp:"'new' allocates memory dynamically on the heap and returns a pointer."},
-    {q:"What is the difference between struct and class in C++?",opts:["None","Default access: struct=public, class=private","Struct can't have methods","Class can't have data"],c:1,exp:"The only difference is default access: struct is public, class is private."},
-    {q:"What is RAII in C++?",opts:["A design pattern","Resource Acquisition Is Initialization — tie resource lifetime to object lifetime","A memory leak","A type of pointer"],c:1,exp:"RAII ensures resources are released when objects go out of scope (e.g., smart pointers)."},
-    {q:"What is a virtual function?",opts:["A fast function","A function resolved at runtime (dynamic dispatch)","A static function","An inline function"],c:1,exp:"Virtual functions enable polymorphism — the correct derived class method is called at runtime."},
-    {q:"What is the STL?",opts:["A compiler","Standard Template Library — containers and algorithms","A graphics library","An OS library"],c:1,exp:"STL provides generic containers (vector, map, set) and algorithms (sort, find)."},
-    {q:"What is a smart pointer?",opts:["A faster raw pointer","An automatic memory-managing pointer","A pointer to a pointer","A const pointer"],c:1,exp:"Smart pointers (unique_ptr, shared_ptr) automatically manage heap memory."},
-    {q:"What does 'const' mean on a member function?",opts:["The function is static","The function won't modify the object","The function is private","The function returns const"],c:1,exp:"A const member function promises not to modify the object's state."},
-    {q:"What is template in C++?",opts:["A code file","Generic programming — write once for multiple types","A macro","A typedef"],c:1,exp:"Templates allow writing generic functions/classes that work with any data type."},
-    {q:"What is the output of `sizeof(int)` typically?",opts:["1","2","4","8"],c:2,exp:"On most 32/64-bit systems, int is 4 bytes."},
+    {q:"What is a pointer?",opts:["A data type","Stores a memory address","An array","A reference alias"],c:1,exp:"A pointer holds the memory address of another variable."},
+    {q:"What does `new` do?",opts:["Creates stack variable","Allocates heap memory","Copies object","Deletes memory"],c:1,exp:"'new' allocates memory on the heap and returns a pointer."},
+    {q:"Default access in struct vs class?",opts:["Both private","struct=public, class=private","struct=private, class=public","Both public"],c:1,exp:"Only difference: struct defaults to public, class to private."},
+    {q:"What is a virtual function?",opts:["Faster function","Runtime dispatch / polymorphism","Inline function","Static function"],c:1,exp:"Virtual functions enable runtime polymorphism via dynamic dispatch."},
+    {q:"STL stands for?",opts:["Standard Template Library","Static Type Library","Standard Type Language","None"],c:0,exp:"STL = Standard Template Library — containers, algorithms, iterators."},
+  ],
+  os:[
+    {q:"What is a deadlock?",opts:["Infinite loop","Circular wait for resources","Memory leak","Race condition"],c:1,exp:"Deadlock: processes wait in a circular chain — none can proceed."},
+    {q:"What is thrashing?",opts:["CPU overuse","Excessive paging, low CPU utilization","Disk failure","Memory corruption"],c:1,exp:"Thrashing: too many page faults → OS spends more time paging than executing."},
+    {q:"Semaphores are used for?",opts:["CPU scheduling","Process synchronization","Memory allocation","File I/O"],c:1,exp:"Semaphores control access to shared resources for synchronization."},
+    {q:"Virtual memory is?",opts:["A type of RAM","Disk space used as RAM","CPU cache","Register bank"],c:1,exp:"Virtual memory lets processes use more memory than physically available."},
+    {q:"What does fork() do?",opts:["Create file","Create child process copy","Kill process","Allocate memory"],c:1,exp:"fork() creates a child process that is a duplicate of the parent."},
+  ],
+  dbms:[
+    {q:"ACID stands for?",opts:["Atomic,Consistent,Isolated,Durable","Async,Concurrent,Independent,Direct","Both A","None"],c:0,exp:"ACID: Atomicity, Consistency, Isolation, Durability."},
+    {q:"What is normalization?",opts:["Speed up queries","Reduce data redundancy","Encrypt data","Add indexes"],c:1,exp:"Normalization organizes data to reduce redundancy and improve integrity."},
+    {q:"WHERE vs HAVING?",opts:["Same","WHERE filters rows; HAVING filters groups","HAVING filters rows","WHERE filters groups"],c:1,exp:"WHERE filters before grouping; HAVING filters after GROUP BY."},
+    {q:"What is a foreign key?",opts:["Secondary index","References primary key of another table","Encrypted key","Composite key"],c:1,exp:"A foreign key links tables via the primary key of another table."},
+    {q:"Which NF removes transitive dependencies?",opts:["1NF","2NF","3NF","BCNF"],c:2,exp:"3NF eliminates non-key attributes depending on other non-key attributes."},
+  ],
+  cn:[
+    {q:"OSI model layers?",opts:["4","5","7","8"],c:2,exp:"7 layers: Physical, Data Link, Network, Transport, Session, Presentation, Application."},
+    {q:"TCP vs UDP: key diff?",opts:["Same","TCP reliable, UDP faster/unreliable","UDP reliable","TCP faster"],c:1,exp:"TCP is connection-oriented and reliable; UDP is connectionless and faster."},
+    {q:"DNS purpose?",opts:["Assign IPs","Domain name to IP resolution","Encrypt data","Route packets"],c:1,exp:"DNS translates domain names (like google.com) to IP addresses."},
+    {q:"Router operates at layer?",opts:["Layer 1","Layer 2","Layer 3","Layer 4"],c:2,exp:"Routers work at Layer 3 (Network layer), forwarding packets based on IP."},
+    {q:"TCP three-way handshake?",opts:["SYN only","SYN,ACK","SYN,SYN-ACK,ACK","ACK,SYN,FIN"],c:2,exp:"TCP establishes connection: SYN → SYN-ACK → ACK."},
   ],
 };
 
@@ -1000,7 +960,7 @@ const ROADMAPS = {
       {n:'Phase 2: Control Flow',done:true,topics:['if/else','for loops','while loops','List Comprehensions','Generators']},
       {n:'Phase 3: Functions & OOP',done:false,active:true,topics:['def & scope','*args/**kwargs','Classes','Inheritance','Dunder methods']},
       {n:'Phase 4: Advanced',done:false,topics:['Decorators','Context managers','Async/Await','Metaclasses','Type hints']},
-      {n:'Phase 5: Ecosystem',done:false,topics:['pip & venv','NumPy','Pandas','FastAPI','Testing with pytest']},
+      {n:'Phase 5: Ecosystem',done:false,topics:['pip & venv','NumPy','Pandas','FastAPI','pytest']},
     ]
   },
   javascript:{
@@ -1009,7 +969,7 @@ const ROADMAPS = {
       {n:'Phase 1: Core JS',done:true,topics:['var/let/const','Functions','Arrays','Objects','Prototypes']},
       {n:'Phase 2: DOM & Browser',done:false,active:true,topics:['DOM manipulation','Events','Fetch API','localStorage','Web APIs']},
       {n:'Phase 3: Async JS',done:false,topics:['Callbacks','Promises','async/await','Event Loop','Error handling']},
-      {n:'Phase 4: Modern JS',done:false,topics:['ES6+ features','Modules','Destructuring','Spread/Rest','Optional chaining']},
+      {n:'Phase 4: Modern JS (ES6+)',done:false,topics:['Modules','Destructuring','Spread/Rest','Optional chaining','WeakMap']},
       {n:'Phase 5: Frameworks',done:false,topics:['React basics','State management','Node.js','Express','REST APIs']},
     ]
   },
@@ -1026,104 +986,174 @@ const ROADMAPS = {
 };
 
 const QUICK_TOPICS = [
-  {lang:'Python',q:'Explain Python decorators with example code'},
-  {lang:'JS',q:'How does the JavaScript event loop work?'},
-  {lang:'Java',q:'Explain OOP pillars with Java examples'},
-  {lang:'DSA',q:'Explain Big O notation for binary search'},
-  {lang:'DBMS',q:'Explain SQL JOINs with examples'},
-  {lang:'OS',q:'How does virtual memory work?'},
-  {lang:'C++',q:'Explain smart pointers in C++'},
-  {lang:'CN',q:'Explain TCP three-way handshake'},
+  {lang:'Python',q:'Explain Python decorators with code example'},
+  {lang:'JS',    q:'How does the JavaScript event loop work?'},
+  {lang:'Java',  q:'Explain OOP pillars with Java code examples'},
+  {lang:'DSA',   q:'Explain Big O notation for common algorithms'},
+  {lang:'DBMS',  q:'Explain SQL JOINs with examples'},
+  {lang:'OS',    q:'How does virtual memory work in operating systems?'},
+  {lang:'C++',   q:'Explain smart pointers in C++ with examples'},
+  {lang:'CN',    q:'Explain the TCP three-way handshake step by step'},
 ];
 
-// ══════════════════════════════════════════ STATE
+// ══════════════════════════════════════════ RUNTIME STATE
 let currentUser = null;
-let apiKey = '';
+let apiKey      = '';
 let chatHistory = [];
-let quizState = { subj:'dsa', diff:'Medium', q:0, score:0, timer:null, timerVal:35, answered:false };
-let appData = { topics:0, tests:0, xp:0, avgScore:0, streak:0 };
+let quizState   = { subj:'dsa', diff:'Medium', q:0, score:0, timer:null, timerVal:35, answered:false };
+let appData     = { topics:0, tests:0, xp:0, avgScore:0, streak:0 };
+let generatedQ  = [];   // live AI questions for current quiz session
+let selectedSubj = 'dsa';
+let selectedDiff = 'Medium';
 
-// ══════════════════════════════════════════ AUTH
+// ══════════════════════════════════════════ CLAUDE API HELPER
+async function callClaude(systemPrompt, userMessage, maxTokens = 1200) {
+  if (!apiKey) throw new Error('NO_KEY');
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userMessage }],
+    }),
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  return data.content.map(b => b.text || '').join('');
+}
+
+// ══════════════════════════════════════════ AI QUESTION GENERATOR
+async function generateQuestions(subjId, difficulty) {
+  const subjNm = SUBJECTS.find(s => s.id === subjId)?.nm || subjId;
+
+  const system = `You are an expert engineering quiz generator.
+Output ONLY valid JSON — no markdown fences, no explanation, nothing else.
+Schema: [{"q":"question","opts":["A","B","C","D"],"c":0,"exp":"brief explanation"},...]
+Rules:
+- Exactly 10 questions
+- "c" is the 0-based index of the correct answer
+- Questions must be CS/Engineering level, not trivial
+- For ${difficulty} difficulty: ${difficulty==='Easy'?'basic recall/syntax':difficulty==='Medium'?'applied concepts, edge cases, code snippets':' deep tricky edge cases, complexity analysis, and debugging scenarios'}
+- Code snippet questions MUST use backtick-wrapped code inside the "q" field
+- Explanation must be concise (1 sentence)`;
+
+  const raw = await callClaude(system, `Generate 10 ${difficulty} MCQ questions for the topic: ${subjNm}`);
+
+  // Strip any accidental markdown fences and parse
+  const clean = raw.replace(/```json|```/g, '').trim();
+  const arr = JSON.parse(clean);
+  if (!Array.isArray(arr) || arr.length < 5) throw new Error('Bad format from AI');
+  return arr.slice(0, 10);
+}
+
+// ══════════════════════════════════════════ AI QUIZ INSIGHT
+async function generateQuizInsight(subjNm, score, wrongTopics) {
+  if (!apiKey) return null;
+  try {
+    const system = `You are a concise engineering tutor giving post-quiz feedback. 2-3 sentences max. Be direct and encouraging.`;
+    const msg = `Student scored ${score}/10 on ${subjNm} (${selectedDiff}). Wrong questions: ${wrongTopics.join(', ')||'none'}. Give a short recommendation.`;
+    return await callClaude(system, msg, 200);
+  } catch { return null; }
+}
+
+// ══════════════════════════════════════════ AUTH HELPERS
 function switchAuthTab(tab) {
-  document.getElementById('tabLogin').classList.toggle('active', tab==='login');
-  document.getElementById('tabSignup').classList.toggle('active', tab==='signup');
-  document.getElementById('loginForm').style.display = tab==='login' ? 'block' : 'none';
-  document.getElementById('signupForm').style.display = tab==='signup' ? 'block' : 'none';
-  document.getElementById('authTitle').textContent = tab==='login' ? 'Welcome Back' : 'Create Account';
-  document.getElementById('authSub').textContent = tab==='login' ? 'Sign in to your engineering dashboard' : 'Join 12,000+ engineering students';
+  document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+  document.getElementById('tabSignup').classList.toggle('active', tab === 'signup');
+  document.getElementById('loginForm').style.display  = tab === 'login'  ? 'block' : 'none';
+  document.getElementById('signupForm').style.display = tab === 'signup' ? 'block' : 'none';
+  document.getElementById('authTitle').textContent = tab === 'login' ? 'Welcome Back' : 'Create Account';
+  document.getElementById('authSub').textContent   = tab === 'login'
+    ? 'Sign in to your engineering dashboard'
+    : 'Join 12,000+ engineering students';
   hideAuthMsg();
 }
+function showAuthErr(m){ const e=document.getElementById('authErr'); e.textContent=m; e.style.display='block'; document.getElementById('authOk').style.display='none'; }
+function showAuthOk(m) { const e=document.getElementById('authOk');  e.textContent=m; e.style.display='block'; document.getElementById('authErr').style.display='none'; }
+function hideAuthMsg()  { document.getElementById('authErr').style.display='none'; document.getElementById('authOk').style.display='none'; }
 
-function showAuthErr(msg) {
-  const el = document.getElementById('authErr');
-  el.textContent = msg; el.style.display = 'block';
-  document.getElementById('authOk').style.display = 'none';
-}
-function showAuthOk(msg) {
-  const el = document.getElementById('authOk');
-  el.textContent = msg; el.style.display = 'block';
-  document.getElementById('authErr').style.display = 'none';
-}
-function hideAuthMsg() {
-  document.getElementById('authErr').style.display = 'none';
-  document.getElementById('authOk').style.display = 'none';
-}
-
+// ══════════════════════════════════════════ SIGN UP
 function doSignup() {
-  const fname = document.getElementById('su-fname').value.trim();
-  const lname = document.getElementById('su-lname').value.trim();
-  const email = document.getElementById('su-email').value.trim();
+  const fname  = document.getElementById('su-fname').value.trim();
+  const lname  = document.getElementById('su-lname').value.trim();
+  const email  = document.getElementById('su-email').value.trim();
   const branch = document.getElementById('su-branch').value;
-  const year = document.getElementById('su-year').value;
-  const pass = document.getElementById('su-pass').value;
+  const year   = document.getElementById('su-year').value;
+  const pass   = document.getElementById('su-pass').value;
 
-  if(!fname||!lname) return showAuthErr('Please enter your full name.');
-  if(!email||!email.includes('@')) return showAuthErr('Please enter a valid email.');
-  if(!branch) return showAuthErr('Please select your branch.');
-  if(pass.length < 6) return showAuthErr('Password must be at least 6 characters.');
+  if (!fname || !lname)          return showAuthErr('Please enter your full name.');
+  if (!email || !email.includes('@')) return showAuthErr('Please enter a valid email.');
+  if (!branch)                   return showAuthErr('Please select your branch.');
+  if (pass.length < 6)           return showAuthErr('Password must be at least 6 characters.');
 
-  const users = JSON.parse(localStorage.getItem('enginex_users')||'{}');
-  if(users[email]) return showAuthErr('An account with this email already exists. Please sign in.');
+  const users = JSON.parse(localStorage.getItem('enginex_users') || '{}');
+  if (users[email]) return showAuthErr('Account already exists. Please sign in.');
 
   const userData = {
     fname, lname, email, pass, branch, year,
     joined: new Date().toISOString(),
-    data: { topics:12, tests:5, xp:850, avgScore:74, streak:3,
-      activity:[{subj:'Python - Functions',score:82,date:'Today',type:'Test'},
-                {subj:'DSA - Arrays',score:90,date:'Yesterday',type:'Test'},
-                {subj:'JavaScript - Closures',score:0,date:'2 days ago',type:'Chat'},
-                {subj:'DBMS - Joins',score:68,date:'3 days ago',type:'Test'}]
+    data: {
+      tests: 0, xp: 0, avgScore: 0, streak: 1,
+      subjectScores: {},            // { subjId: [score, score, …] }
+      activity: [],                 // real test/chat log
+      weeklyMins: [0,0,0,0,0,0,0], // Mon-Sun session minutes
+      lastActiveDay: new Date().toDateString(),
     }
   };
   users[email] = userData;
   localStorage.setItem('enginex_users', JSON.stringify(users));
   showAuthOk('Account created! Signing you in…');
-  setTimeout(() => launchApp(userData), 1000);
+  setTimeout(() => launchApp(userData), 900);
 }
 
+// ══════════════════════════════════════════ SIGN IN
 function doLogin() {
   const email = document.getElementById('li-email').value.trim();
-  const pass = document.getElementById('li-pass').value;
-  if(!email) return showAuthErr('Please enter your email.');
-  if(!pass) return showAuthErr('Please enter your password.');
+  const pass  = document.getElementById('li-pass').value;
+  if (!email) return showAuthErr('Please enter your email.');
+  if (!pass)  return showAuthErr('Please enter your password.');
 
-  const users = JSON.parse(localStorage.getItem('enginex_users')||'{}');
-  const user = users[email];
-  if(!user) return showAuthErr('No account found. Please sign up first.');
-  if(user.pass !== pass) return showAuthErr('Incorrect password. Please try again.');
+  const users = JSON.parse(localStorage.getItem('enginex_users') || '{}');
+  const user  = users[email];
+  if (!user)           return showAuthErr('No account found. Please sign up first.');
+  if (user.pass !== pass) return showAuthErr('Incorrect password. Please try again.');
+
+  // Update streak
+  const today    = new Date().toDateString();
+  const lastDay  = user.data.lastActiveDay;
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  if (lastDay === today) { /* same day, no change */ }
+  else if (lastDay === yesterday) { user.data.streak = (user.data.streak || 0) + 1; }
+  else { user.data.streak = 1; }
+  user.data.lastActiveDay = today;
 
   const remember = document.getElementById('li-remember').checked;
-  if(remember) localStorage.setItem('enginex_session', email);
+  if (remember) localStorage.setItem('enginex_session', email);
+
+  // Persist streak update
+  users[email] = user;
+  localStorage.setItem('enginex_users', JSON.stringify(users));
   launchApp(user);
 }
 
+// ══════════════════════════════════════════ LAUNCH APP
 function launchApp(user) {
   currentUser = user;
   apiKey = localStorage.getItem('enginex_apikey') || '';
-  if(apiKey) document.getElementById('modelBadge').textContent = 'Claude AI';
-  else document.getElementById('apiKeyCard').style.display = 'block';
-
-  document.getElementById('authPage').style.opacity = '0';
+  if (apiKey) {
+    document.getElementById('modelBadge').textContent = 'Claude AI';
+    document.getElementById('apiKeyCard').style.display = 'none';
+  } else {
+    document.getElementById('apiKeyCard').style.display = 'block';
+  }
+  document.getElementById('authPage').style.opacity    = '0';
   document.getElementById('authPage').style.transition = 'opacity 0.35s';
   setTimeout(() => {
     document.getElementById('authPage').classList.add('hidden');
@@ -1137,251 +1167,315 @@ function doLogout() {
   document.getElementById('appShell').classList.add('hidden');
   document.getElementById('authPage').classList.remove('hidden');
   document.getElementById('authPage').style.opacity = '1';
-  currentUser = null; chatHistory = [];
+  currentUser = null; chatHistory = []; generatedQ = [];
 }
 
 function deleteAccount() {
-  if(!confirm('Delete your account permanently? This cannot be undone.')) return;
-  const users = JSON.parse(localStorage.getItem('enginex_users')||'{}');
+  if (!confirm('Delete your account permanently? This cannot be undone.')) return;
+  const users = JSON.parse(localStorage.getItem('enginex_users') || '{}');
   delete users[currentUser.email];
   localStorage.setItem('enginex_users', JSON.stringify(users));
   doLogout();
-  toast('Account deleted.','error');
+  toast('Account deleted.', 'error');
 }
 
+// API key saves
 function saveApiKey() {
   const k = document.getElementById('apiKeyInput').value.trim();
-  if(!k.startsWith('sk-ant')) return;
-  localStorage.setItem('enginex_apikey', k);
-  apiKey = k;
-  toast('API key saved! AI Tutor is now live.','success');
+  if (!k.startsWith('sk-ant')) { toast('Key must start with sk-ant…', 'error'); return; }
+  localStorage.setItem('enginex_apikey', k); apiKey = k;
+  document.getElementById('modelBadge').textContent = 'Claude AI';
+  toast('API key saved! AI features unlocked.', 'success');
 }
-
 function saveApiKeyInline() {
   const k = document.getElementById('inlineApiKey').value.trim();
-  if(!k.startsWith('sk-ant')) { toast('Invalid API key format.','error'); return; }
-  localStorage.setItem('enginex_apikey', k);
-  apiKey = k;
+  if (!k.startsWith('sk-ant')) { toast('Invalid API key format.', 'error'); return; }
+  localStorage.setItem('enginex_apikey', k); apiKey = k;
   document.getElementById('modelBadge').textContent = 'Claude AI';
   document.getElementById('apiKeyCard').style.display = 'none';
-  toast('AI Tutor activated!','success');
+  toast('AI Tutor activated! 🚀', 'success');
 }
-
 function saveApiKeySettings() {
   const k = document.getElementById('settingsApiKey').value.trim();
-  if(!k.startsWith('sk-ant')) { toast('Invalid API key.','error'); return; }
-  localStorage.setItem('enginex_apikey', k);
-  apiKey = k;
-  document.getElementById('apiKeyDisplay').textContent = k.slice(0,18) + '…';
+  if (!k.startsWith('sk-ant')) { toast('Invalid API key.', 'error'); return; }
+  localStorage.setItem('enginex_apikey', k); apiKey = k;
+  document.getElementById('apiKeyDisplay').textContent = k.slice(0, 20) + '…';
   document.getElementById('modelBadge').textContent = 'Claude AI';
-  toast('API key updated!','success');
+  toast('API key updated!', 'success');
 }
 
-// ══════════════════════════════════════════ APP INIT
+// ══════════════════════════════════════════ APP INIT  (all real data)
 function initApp() {
-  const d = currentUser.data;
-  appData = { topics:d.topics, tests:d.tests, xp:d.xp, avgScore:d.avgScore, streak:d.streak };
+  const d   = currentUser.data;
+  appData   = { tests: d.tests||0, xp: d.xp||0, avgScore: d.avgScore||0, streak: d.streak||1 };
+
+  // Compute topics mastered from real subjectScores (subjects with avg ≥ 60%)
+  const ss = d.subjectScores || {};
+  let mastered = 0;
+  SUBJECTS.forEach(s => {
+    const arr = ss[s.id] || [];
+    if (arr.length > 0 && avg(arr) >= 60) mastered++;
+  });
+  appData.topics = mastered;
 
   const name = currentUser.fname;
-  document.getElementById('sbAv').textContent = name[0].toUpperCase();
-  document.getElementById('sbName').textContent = name + ' ' + currentUser.lname;
-  const lvl = Math.floor(appData.xp / 1000) + 1;
-  document.getElementById('sbRole').textContent = `Level ${lvl} · ${currentUser.branch.split(' ')[0]}`;
+  document.getElementById('sbAv').textContent   = name[0].toUpperCase();
+  document.getElementById('sbName').textContent  = `${name} ${currentUser.lname}`;
+  const lvl = Math.floor(appData.xp / 500) + 1;
+  document.getElementById('sbRole').textContent  = `Level ${lvl} · ${currentUser.branch.split(' ')[0]}`;
 
   const h = new Date().getHours();
-  const greet = h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  const greet = h<12 ? 'Good morning' : h<17 ? 'Good afternoon' : 'Good evening';
   document.getElementById('wbGreet').textContent = `${greet}, ${name}! 👾`;
   document.getElementById('streakCount').textContent = appData.streak;
-  document.getElementById('statTopics').textContent = appData.topics;
-  document.getElementById('statTests').textContent = appData.tests;
-  document.getElementById('statXP').textContent = appData.xp.toLocaleString();
-  document.getElementById('statScore').textContent = appData.avgScore + '%';
+  document.getElementById('statTopics').textContent  = mastered;
+  document.getElementById('statTests').textContent   = appData.tests;
+  document.getElementById('statXP').textContent      = appData.xp.toLocaleString();
+  document.getElementById('statScore').textContent   = (appData.avgScore || 0) + '%';
 
-  // Subject bars
-  const pcts = {python:75,javascript:58,java:45,cpp:38,dsa:82,dbms:60,os:50,cn:42};
+  renderSubjectBars();
+  renderRecentActivity();
+  renderProfile();
+  renderQuizPicker();
+  initLeaderboard();
+  initProgress();
+  initRoadmap();
+  renderTopicChips();
+
+  // Settings
+  document.getElementById('apiKeyDisplay').textContent = apiKey ? apiKey.slice(0,20)+'…' : 'No key saved';
+  // Leaderboard live stats
+  document.getElementById('lbStreak').textContent = appData.streak;
+  document.getElementById('lbXP').textContent     = appData.xp.toLocaleString();
+}
+
+// Recompute & refresh dashboard numbers after a test
+function refreshDashboard() {
+  const users = JSON.parse(localStorage.getItem('enginex_users') || '{}');
+  if (users[currentUser.email]) {
+    currentUser = users[currentUser.email];
+  }
+  initApp();
+}
+
+// ══════════════════════════════════════════ RENDER HELPERS
+function avg(arr) { return arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : 0; }
+
+function renderSubjectBars() {
+  const ss = currentUser.data.subjectScores || {};
   const container = document.getElementById('langBars');
   container.innerHTML = '';
-  SUBJECTS.slice(0,6).forEach(s => {
-    const pct = pcts[s.id]||50;
+  SUBJECTS.slice(0, 6).forEach(s => {
+    const arr = ss[s.id] || [];
+    const pct = arr.length ? Math.min(avg(arr), 100) : 0;
+    const label = arr.length ? `${pct}% (${arr.length} test${arr.length>1?'s':''})` : 'No tests yet';
     container.innerHTML += `
       <div class="subj-row">
         <div class="subj-ico">${s.ico}</div>
         <div class="subj-info">
-          <div class="subj-nm">${s.nm}<span style="color:${s.color}">${pct}%</span></div>
+          <div class="subj-nm">${s.nm}<span style="color:${s.color}">${label}</span></div>
           <div class="subj-bar"><div class="subj-fill" style="width:0%;background:${s.color}" data-w="${pct}%"></div></div>
         </div>
       </div>`;
   });
   setTimeout(() => document.querySelectorAll('.subj-fill').forEach(e => e.style.width = e.dataset.w), 120);
+}
 
-  // Recent Activity
-  const acts = currentUser.data.activity;
-  document.getElementById('recentAct').innerHTML = acts.map(a => {
-    const col = a.score>=80?'var(--green)':a.score>=60?'var(--yellow)':a.type==='Chat'?'var(--cyan)':'var(--red)';
-    const sc = a.type==='Chat' ? '+30 XP' : a.score+'%';
+function renderRecentActivity() {
+  const acts = (currentUser.data.activity || []).slice(0, 6);
+  const container = document.getElementById('recentAct');
+  if (acts.length === 0) {
+    container.innerHTML = `<div style="color:var(--muted2);font-size:13px;padding:16px 0;text-align:center">No activity yet. Take a mock test to get started! 🚀</div>`;
+    return;
+  }
+  container.innerHTML = acts.map(a => {
+    const isChat = a.type === 'Chat';
+    const col = isChat ? 'var(--cyan)' : a.score >= 80 ? 'var(--green)' : a.score >= 60 ? 'var(--yellow)' : 'var(--red)';
+    const sc  = isChat ? '+30 XP' : `${a.score}%`;
     return `<div class="act-item">
       <div class="act-dot" style="background:${col}"></div>
       <div style="flex:1"><div class="act-label">${a.subj}</div><div class="act-meta">${a.date} · ${a.type}</div></div>
       <div class="act-score" style="color:${col}">${sc}</div>
     </div>`;
   }).join('');
+}
 
-  // Profile
-  document.getElementById('profAv').textContent = name[0].toUpperCase();
-  document.getElementById('profName').textContent = name + ' ' + currentUser.lname;
-  document.getElementById('profSub').textContent = `${currentUser.branch} · ${currentUser.year}`;
-  const xpInLevel = appData.xp % 1000;
-  document.getElementById('xpFrac').textContent = `${appData.xp} / ${(lvl)*1000}`;
-  document.getElementById('xpFill').style.width = (xpInLevel/10) + '%';
+function renderProfile() {
+  const name = currentUser.fname;
+  const d    = currentUser.data;
+  const lvl  = Math.floor(appData.xp / 500) + 1;
+  const xpInLvl = appData.xp % 500;
+  document.getElementById('profAv').textContent    = name[0].toUpperCase();
+  document.getElementById('profName').textContent   = `${name} ${currentUser.lname}`;
+  document.getElementById('profSub').textContent    = `${currentUser.branch} · ${currentUser.year}`;
+  document.getElementById('xpFrac').textContent     = `${appData.xp} / ${lvl * 500}`;
+  document.getElementById('xpFill').style.width     = (xpInLvl / 5) + '%';
   document.getElementById('profBadges').innerHTML = `
     <span class="pbadge" style="background:rgba(0,229,255,.1);color:var(--cyan)">🎓 Level ${lvl}</span>
     <span class="pbadge" style="background:rgba(255,123,53,.1);color:var(--orange)">🔥 ${appData.streak}-day</span>
     <span class="pbadge" style="background:rgba(57,255,144,.1);color:var(--green)">⚡ ${appData.tests} Tests</span>`;
-  document.getElementById('profLangs').innerHTML = SUBJECTS.map(s=>`${s.ico} ${s.nm}`).join('<br>');
-  document.getElementById('profBadgeGrid').innerHTML = ['🥇','⚡','🔥','💯','🤖','🌲','🔒','🔒'].map((b,i)=>
-    `<span style="font-size:22px;opacity:${i<6?1:.25}">${b}</span>`).join('');
-  const stRow = (l,v,c) => `<div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--muted2)">${l}</span><span style="font-weight:700;color:${c||'inherit'}">${v}</span></div>`;
-  document.getElementById('profStats').innerHTML = stRow('Tests Completed',appData.tests)+stRow('Avg Score',appData.avgScore+'%')+stRow('Topics Mastered',appData.topics)+stRow('Best Subject','DSA','var(--cyan)')+stRow('Total XP',appData.xp.toLocaleString());
+  document.getElementById('profLangs').innerHTML = SUBJECTS.map(s => `${s.ico} ${s.nm}`).join('<br>');
 
-  // Quiz subjects
+  const testsDone = appData.tests;
+  const badges    = [
+    testsDone >= 1  ? '🥇' : '🔒',
+    appData.streak >= 7  ? '🔥' : '🔒',
+    appData.avgScore >= 100 ? '💯' : '🔒',
+    testsDone >= 10 ? '⚡' : '🔒',
+    testsDone >= 5  ? '🤖' : '🔒',
+    appData.topics >= 3  ? '🌲' : '🔒',
+  ];
+  document.getElementById('profBadgeGrid').innerHTML = badges.map((b,i) =>
+    `<span title="${b==='🔒'?'Locked':'Unlocked'}" style="font-size:22px;opacity:${b!=='🔒'?1:.25}">${b}</span>`).join('');
+
+  // Best subject from subjectScores
+  const ss = d.subjectScores || {};
+  let bestSubj = 'None yet', bestScore = 0;
+  SUBJECTS.forEach(s => { const a = avg(ss[s.id]||[]); if(a>bestScore){bestScore=a;bestSubj=s.nm;} });
+
+  const stRow = (l,v,c='inherit') => `<div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--muted2)">${l}</span><span style="font-weight:700;color:${c}">${v}</span></div>`;
+  document.getElementById('profStats').innerHTML =
+    stRow('Tests Completed', appData.tests) +
+    stRow('Avg Score', appData.avgScore + '%') +
+    stRow('Topics Mastered', appData.topics) +
+    stRow('Best Subject', bestSubj, 'var(--cyan)') +
+    stRow('Total XP', appData.xp.toLocaleString());
+}
+
+function renderQuizPicker() {
   document.getElementById('qSubjGrid').innerHTML = SUBJECTS.map(s => `
-    <div class="qsubj-card ${s.id==='dsa'?'sel':''}" onclick="pickSubj(this,'${s.id}')">
+    <div class="qsubj-card ${s.id === selectedSubj ? 'sel' : ''}" onclick="pickSubj(this,'${s.id}')">
       <div class="qs-ico">${s.ico}</div>
       <div class="qs-nm">${s.nm}</div>
       <div class="qs-cnt">${s.topics} topics</div>
     </div>`).join('');
+}
 
-  // Quick topic chips
+function renderTopicChips() {
   document.getElementById('topicChips').innerHTML = QUICK_TOPICS.map(t => `
     <button class="topic-chip" onclick="askTopic('${t.q.replace(/'/g,"\\'")}')">
-      <span class="tc-lang">[${t.lang}]</span>${t.q.length>35 ? t.q.slice(0,35)+'…':t.q}
+      <span class="tc-lang">[${t.lang}]</span>${t.q.length > 36 ? t.q.slice(0, 36) + '…' : t.q}
     </button>`).join('');
-
-  // Settings API key display
-  document.getElementById('apiKeyDisplay').textContent = apiKey ? apiKey.slice(0,18)+'…' : 'No key saved';
-
-  // Leaderboard
-  initLeaderboard();
-
-  // Progress
-  initProgress();
-
-  // Roadmap
-  initRoadmap();
-
-  // Auto-restore session bar
-  document.getElementById('lbStreak').textContent = appData.streak;
-  document.getElementById('lbXP').textContent = appData.xp.toLocaleString();
 }
 
 // ══════════════════════════════════════════ NAVIGATION
 const panelTitles = {
-  dashboard:['Dashboard','Welcome back 👋'],
-  tutor:['AI Tutor','Powered by Claude · Engineering focused'],
-  quiz:['Mock Tests','10 Questions · Timer · Instant feedback'],
-  roadmap:['Learning Roadmaps','Step-by-step curriculum paths'],
-  progress:['My Progress','Analytics & performance tracking'],
-  leaderboard:['Leaderboard','Rankings · Your position'],
-  profile:['Profile','Your engineering journey'],
-  settings:['Settings','Account & preferences'],
+  dashboard:   ['Dashboard',        'Welcome back 👾'],
+  tutor:       ['AI Tutor',         'Powered by Claude · Engineering focused'],
+  quiz:        ['Mock Tests',       apiKey ? 'AI-generated questions · Live' : '10 Questions · Timer · Instant feedback'],
+  roadmap:     ['Learning Roadmaps','Step-by-step curriculum paths'],
+  progress:    ['My Progress',      'Analytics & performance tracking'],
+  leaderboard: ['Leaderboard',      'Rankings · Your position'],
+  profile:     ['Profile',          'Your engineering journey'],
+  settings:    ['Settings',         'Account & preferences'],
 };
-
 function goPanel(id, el) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('panel-'+id).classList.add('active');
-  if(el) el.classList.add('active');
-  const t = panelTitles[id]||[id,''];
+  document.getElementById('panel-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+  const t = panelTitles[id] || [id, ''];
   document.getElementById('pgTitle').textContent = t[0];
-  document.getElementById('pgSub').textContent = t[1];
+  document.getElementById('pgSub').textContent   = t[1];
+  if (id === 'progress')    initProgress();
+  if (id === 'leaderboard') initLeaderboard();
 }
 
-// ══════════════════════════════════════════ AI TUTOR
-function chatKey(e) {
-  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendMsg(); }
-}
+// ══════════════════════════════════════════ AI TUTOR CHAT
+function chatKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } }
 
 async function sendMsg() {
   const inp = document.getElementById('chatInp');
   const txt = inp.value.trim();
-  if(!txt) return;
+  if (!txt) return;
   inp.value = '';
-  addMsg('user', txt);
+  addChatMsg('user', txt);
   document.getElementById('sendBtn').disabled = true;
+
   const cnt = parseInt(document.getElementById('msgCount').textContent) + 1;
   document.getElementById('msgCount').textContent = cnt;
 
-  // Typing
-  const tid = 'typing_'+Date.now();
+  const tid = 'typing_' + Date.now();
   document.getElementById('chatMsgs').insertAdjacentHTML('beforeend',
     `<div class="msg ai" id="${tid}"><div class="msg-lbl">AI Tutor</div><div class="msg-bub"><div class="typing-dots"><span></span><span></span><span></span></div></div></div>`);
   scrollChat();
 
   let reply;
-  if(apiKey) {
+  if (apiKey) {
     try {
-      chatHistory.push({role:'user',content:txt});
+      chatHistory.push({ role: 'user', content: txt });
       const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method:'POST',
-        headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:1000,
-          system:`You are EngineX AI — a brilliant engineering tutor for CS/Engineering students. 
-You help with Python, Java, JavaScript, C++, DSA, DBMS, Operating Systems, Computer Networks, and Discrete Mathematics.
-Format code blocks with triple backticks and the language name.
-Be concise, use bullet points, and always give a practical code example when relevant.
-Address the student directly and encouragingly.`,
-          messages: chatHistory
-        })
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: `You are EngineX AI — an expert engineering tutor for CS & Engineering students.
+Specialities: Python, Java, JavaScript, C++, DSA, DBMS, Operating Systems, Computer Networks, Discrete Math, System Design.
+Format: Use **bold** for key terms. Use triple-backtick code blocks with language name. Be concise, practical, exam-aware.
+Always give a working code example when relevant. Address the student by name if mentioned.`,
+          messages: chatHistory,
+        }),
       });
       const data = await res.json();
-      if(data.error) throw new Error(data.error.message);
+      if (data.error) throw new Error(data.error.message);
       reply = data.content[0].text;
-      chatHistory.push({role:'assistant',content:reply});
-    } catch(err) {
-      reply = `⚠️ API Error: ${err.message}. Check your API key in Settings.`;
+      chatHistory.push({ role: 'assistant', content: reply });
+    } catch (err) {
+      reply = `⚠️ **API Error:** ${err.message}\n\nCheck your API key in Settings or the sidebar panel.`;
     }
   } else {
     reply = getDemoResponse(txt);
   }
 
   document.getElementById(tid)?.remove();
-  addMsg('ai', formatAIMsg(reply));
+  addChatMsg('ai', formatMsg(reply));
   document.getElementById('sendBtn').disabled = false;
 
-  const xp = parseInt(document.getElementById('xpCount').textContent.replace('+','')) + 15;
-  document.getElementById('xpCount').textContent = '+'+xp;
+  const xp = parseInt(document.getElementById('xpCount').textContent.replace('+', '')) + 15;
+  document.getElementById('xpCount').textContent = '+' + xp;
+
+  // Log chat activity
+  persistChatActivity(txt);
   scrollChat();
 }
 
-function formatAIMsg(text) {
-  // Format code blocks
+function persistChatActivity(question) {
+  const users = JSON.parse(localStorage.getItem('enginex_users') || '{}');
+  if (!users[currentUser.email]) return;
+  const act = users[currentUser.email].data.activity;
+  act.unshift({ subj: question.slice(0, 45) + (question.length > 45 ? '…' : ''), score: 0, date: 'Just now', type: 'Chat' });
+  if (act.length > 20) act.pop();
+  users[currentUser.email].data.xp = (users[currentUser.email].data.xp || 0) + 15;
+  localStorage.setItem('enginex_users', JSON.stringify(users));
+}
+
+function formatMsg(text) {
   text = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (_, lang, code) =>
-    `<div class="code-lang">${lang||'code'}</div><pre><code>${escHtml(code.trim())}</code></pre>`);
+    `<div class="code-lang">${lang || 'code'}</div><pre><code>${escH(code.trim())}</code></pre>`);
   text = text.replace(/`([^`]+)`/g, '<code style="font-family:var(--mono);background:rgba(0,229,255,.08);padding:1px 5px;border-radius:3px;color:var(--cyan)">$1</code>');
   text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   text = text.replace(/\n/g, '<br>');
   return text;
 }
+function escH(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-function addMsg(role, html) {
+function addChatMsg(role, html) {
   const el = document.createElement('div');
   el.className = `msg ${role}`;
-  el.innerHTML = `<div class="msg-lbl">${role==='ai'?'AI Tutor':'You'}</div><div class="msg-bub">${html}</div>`;
+  el.innerHTML = `<div class="msg-lbl">${role === 'ai' ? 'AI Tutor' : 'You'}</div><div class="msg-bub">${html}</div>`;
   document.getElementById('chatMsgs').appendChild(el);
   scrollChat();
 }
-
 function scrollChat() {
   const m = document.getElementById('chatMsgs');
   m.scrollTop = m.scrollHeight;
 }
-
 function askTopic(q) {
   document.getElementById('chatInp').value = q;
   sendMsg();
@@ -1390,135 +1484,233 @@ function askTopic(q) {
 
 function getDemoResponse(q) {
   const ql = q.toLowerCase();
-  if(ql.includes('python') || ql.includes('decorator')) return `**Python Decorators** 🐍\n\nDecorators wrap a function to add behaviour without modifying it.\n\n\`\`\`python\ndef timer(func):\n    import time\n    def wrapper(*args, **kwargs):\n        start = time.time()\n        result = func(*args, **kwargs)\n        print(f"Ran in {time.time()-start:.4f}s")\n        return result\n    return wrapper\n\n@timer\ndef slow_function():\n    time.sleep(0.5)\n\nslow_function()  # Ran in 0.5001s\`\`\`\n\nKey points:\n• A decorator is a **higher-order function**\n• \`@decorator\` is syntactic sugar for \`func = decorator(func)\`\n• Common uses: logging, authentication, caching\n\n> 💡 Add your Anthropic API key in Settings for real-time answers!`;
-  if(ql.includes('bigo')||ql.includes('complexity')||ql.includes('o(n)')) return `**Big O Notation** 🌲\n\n| Notation | Name | Example |\n|---|---|---|\n| O(1) | Constant | Array index access |\n| O(log n) | Logarithmic | Binary Search |\n| O(n) | Linear | Linear Search |\n| O(n log n) | Linearithmic | Merge Sort |\n| O(n²) | Quadratic | Bubble Sort |\n\n\`\`\`python\n# O(n²) - Nested loops\nfor i in range(n):\n    for j in range(n):  # Bad for large n!\n        ...\n\n# O(n log n) - Merge Sort\ndef merge_sort(arr):\n    if len(arr) <= 1: return arr\n    mid = len(arr) // 2\n    L = merge_sort(arr[:mid])\n    R = merge_sort(arr[mid:])\n    return merge(L, R)\`\`\`\n\n> 💡 Add your API key for live AI responses!`;
-  if(ql.includes('sql')||ql.includes('join')||ql.includes('dbms')) return `**SQL JOINs** 🗄️\n\n\`\`\`sql\n-- INNER JOIN: only matching rows\nSELECT e.name, d.dept_name\nFROM employees e\nINNER JOIN departments d ON e.dept_id = d.id;\n\n-- LEFT JOIN: all from left table\nSELECT e.name, d.dept_name\nFROM employees e\nLEFT JOIN departments d ON e.dept_id = d.id;\n\n-- GROUP BY with aggregate\nSELECT dept_id, COUNT(*) as count, AVG(salary)\nFROM employees\nGROUP BY dept_id\nHAVING COUNT(*) > 5;\`\`\`\n\nTypes:\n• **INNER** — matching rows only\n• **LEFT** — all left + matching right\n• **RIGHT** — all right + matching left\n• **FULL OUTER** — all rows from both\n\n> 💡 Add your API key for live responses!`;
-  if(ql.includes('java')||ql.includes('oop')||ql.includes('polymorphism')) return `**OOP Pillars in Java** ☕\n\n\`\`\`java\n// Encapsulation\nclass BankAccount {\n    private double balance; // hidden!\n    public void deposit(double amt) {\n        if(amt > 0) balance += amt;\n    }\n}\n\n// Inheritance + Polymorphism\nabstract class Shape {\n    abstract double area();\n}\nclass Circle extends Shape {\n    double r;\n    Circle(double r){ this.r = r; }\n    @Override\n    double area(){ return Math.PI * r * r; }\n}\`\`\`\n\n4 Pillars: **Encapsulation** · **Abstraction** · **Inheritance** · **Polymorphism**\n\n> 💡 Add your Anthropic API key for live Claude responses!`;
-  return `Great question! 👾 Here's what you need to know:\n\n**Key Concepts:**\n• This is a core engineering topic covered in interviews\n• Understanding fundamentals beats memorizing solutions\n• Practice implementation regularly\n\n> 💡 **Add your Anthropic API key** in Settings or the sidebar panel to get real Claude AI responses with detailed code examples tailored exactly to your question!`;
+  if (ql.includes('decorator'))
+    return `**Python Decorators** 🐍\n\nDecorators wrap functions to add behaviour without modifying the original.\n\n\`\`\`python\nimport time\n\ndef timer(func):\n    def wrapper(*args, **kwargs):\n        t = time.perf_counter()\n        result = func(*args, **kwargs)\n        print(f"{func.__name__} ran in {time.perf_counter()-t:.4f}s")\n        return result\n    return wrapper\n\n@timer\ndef slow():\n    time.sleep(0.3)\n\nslow()  # slow ran in 0.3001s\`\`\`\n\n**Key points:**\n• A decorator is a higher-order function\n• \`@name\` is sugar for \`func = name(func)\`\n• Common uses: logging, auth, caching (functools.lru_cache)\n\n> 💡 Add your Anthropic API key for live, context-aware answers!`;
+  if (ql.includes('event loop') || ql.includes('javascript'))
+    return `**JavaScript Event Loop** ⚡\n\nJS is single-threaded but handles async via the event loop.\n\n\`\`\`javascript\nconsole.log('1 - sync');\n\nsetTimeout(() => console.log('3 - macro task'), 0);\n\nPromise.resolve().then(() => console.log('2 - micro task'));\n\n// Output: 1 → 2 → 3\n// Why? Microtasks (Promises) run BEFORE macrotasks (setTimeout)\`\`\`\n\n**Order:** Call Stack → Microtask Queue → Macrotask Queue\n\n> 💡 Add your API key for real Claude responses!`;
+  if (ql.includes('big o') || ql.includes('complexity') || ql.includes('dsa'))
+    return `**Big O Notation** 🌲\n\n| Notation | Name | Example |\n|---|---|---|\n| O(1) | Constant | Array index |\n| O(log n) | Log | Binary Search |\n| O(n) | Linear | Linear Search |\n| O(n log n) | Linearithmic | Merge Sort |\n| O(n²) | Quadratic | Bubble Sort |\n\n\`\`\`python\n# O(n²) — avoid for large n\nfor i in range(n):\n    for j in range(n):\n        process(i, j)\n\n# O(n log n) — merge sort\ndef merge_sort(arr):\n    if len(arr) <= 1: return arr\n    mid = len(arr) // 2\n    return merge(merge_sort(arr[:mid]), merge_sort(arr[mid:]))\`\`\`\n\n> 💡 Add your API key for live answers!`;
+  return `Great question! 👾 This is a core topic in engineering interviews.\n\nHere's a quick outline:\n• **Understand fundamentals** before memorising solutions\n• **Draw diagrams** for system/OS/network concepts\n• **Write code** for algorithms — don't just read\n\n> 💡 **Add your Anthropic API key** in Settings for real Claude AI answers with full code examples tailored to your exact question!`;
 }
 
-// ══════════════════════════════════════════ QUIZ
-let selectedSubj = 'dsa';
-let selectedDiff = 'Medium';
-let shuffledQ = [];
-
+// ══════════════════════════════════════════ QUIZ — AI POWERED
 function pickSubj(el, id) {
   document.querySelectorAll('.qsubj-card').forEach(c => c.classList.remove('sel'));
   el.classList.add('sel');
   selectedSubj = id;
 }
-
 function pickDiff(btn, d) {
   document.querySelectorAll('.diff-btn').forEach(b => {
     b.className = 'diff-btn';
-    b.textContent = b.textContent.replace(' ✓','');
+    b.textContent = b.textContent.replace(' ✓', '');
   });
-  const cls = d==='Easy'?'sel-e':d==='Medium'?'sel-m':'sel-h';
-  btn.className = `diff-btn ${cls}`;
+  btn.className = `diff-btn ${d==='Easy'?'sel-e':d==='Medium'?'sel-m':'sel-h'}`;
   btn.textContent = d + ' ✓';
   selectedDiff = d;
 }
 
-function startQuiz() {
-  quizState = { subj:selectedSubj, diff:selectedDiff, q:0, score:0, timer:null, timerVal:35, answered:false };
-  shuffledQ = [...(QUIZ_BANK[selectedSubj]||QUIZ_BANK.dsa)].sort(()=>Math.random()-.5).slice(0,10);
+async function startQuiz() {
+  quizState = { subj: selectedSubj, diff: selectedDiff, q: 0, score: 0, timer: null, timerVal: 35, answered: false };
+
+  // Show loading state
   document.getElementById('quizPick').classList.add('hidden');
   document.getElementById('quizActive').classList.remove('hidden');
-  renderQ();
+  document.getElementById('quizRes').classList.add('hidden');
+  document.getElementById('qText').innerHTML = '';
+  document.getElementById('qOpts').innerHTML = '';
+  document.getElementById('qPills').innerHTML = '';
+  document.getElementById('qNum').textContent = '—';
+  document.getElementById('qPF').style.width = '0%';
+  document.getElementById('qTimer').textContent = '⏱ …';
+  document.getElementById('btnNext').disabled = true;
+  document.getElementById('qFb').textContent = '';
+  document.getElementById('qText').innerHTML = `
+    <div style="text-align:center;padding:30px 0;">
+      <div class="typing-dots" style="justify-content:center;display:flex;margin-bottom:16px"><span></span><span></span><span></span></div>
+      <div style="color:var(--muted2);font-size:13px;">${apiKey ? '🤖 Generating AI questions for <strong>' + (SUBJECTS.find(s=>s.id===selectedSubj)?.nm||selectedSubj) + '</strong> — ' + selectedDiff + ' difficulty…' : '📚 Loading questions…'}</div>
+    </div>`;
+
+  try {
+    if (apiKey) {
+      generatedQ = await generateQuestions(selectedSubj, selectedDiff);
+    } else {
+      // Use fallback bank with shuffle
+      const bank = FALLBACK_Q[selectedSubj] || FALLBACK_Q.dsa;
+      // Pad to 10 by repeating if needed
+      const extended = [...bank];
+      while (extended.length < 10) extended.push(...bank);
+      generatedQ = extended.sort(() => Math.random() - .5).slice(0, 10);
+    }
+    renderQ();
+  } catch (err) {
+    // JSON parse failed or API error — fall back
+    console.warn('AI quiz gen failed:', err.message);
+    const bank = FALLBACK_Q[selectedSubj] || FALLBACK_Q.dsa;
+    const extended = [...bank];
+    while (extended.length < 10) extended.push(...bank);
+    generatedQ = extended.sort(() => Math.random() - .5).slice(0, 10);
+    toast('Using offline questions (API error).', 'error');
+    renderQ();
+  }
 }
 
 function renderQ() {
-  const q = shuffledQ[quizState.q];
+  const q = generatedQ[quizState.q];
   quizState.answered = false;
-  document.getElementById('qNum').textContent = quizState.q+1;
-  document.getElementById('qPF').style.width = ((quizState.q+1)/10*100)+'%';
+  document.getElementById('qNum').textContent = quizState.q + 1;
+  document.getElementById('qPF').style.width  = ((quizState.q + 1) / 10 * 100) + '%';
   document.getElementById('btnNext').disabled = true;
-  document.getElementById('qFb').textContent = '';
+  document.getElementById('qFb').textContent  = '';
 
-  const subj = SUBJECTS.find(s=>s.id===quizState.subj)||SUBJECTS[4];
+  const subj = SUBJECTS.find(s => s.id === quizState.subj) || SUBJECTS[4];
   document.getElementById('qPills').innerHTML = `
     <span class="lang-pill" style="background:rgba(0,229,255,.08);border-color:rgba(0,229,255,.25);color:var(--cyan)">${subj.ico} ${subj.nm}</span>
-    <span class="lang-pill" style="background:rgba(189,147,249,.08);border-color:rgba(189,147,249,.25);color:var(--purple)">${selectedDiff}</span>`;
+    <span class="lang-pill" style="background:rgba(189,147,249,.08);border-color:rgba(189,147,249,.25);color:var(--purple)">${selectedDiff}</span>
+    ${apiKey ? '<span class="lang-pill" style="background:rgba(57,255,144,.08);border-color:rgba(57,255,144,.2);color:var(--green);font-size:10px">✦ AI Generated</span>' : ''}`;
 
-  document.getElementById('qText').innerHTML = q.q.replace(/`([^`]+)`/g,'<code>$1</code>');
+  // Render question (handle code backticks)
+  document.getElementById('qText').innerHTML = (q.q || '').replace(/`([^`]+)`/g,
+    '<code style="font-family:var(--mono);background:rgba(0,229,255,.08);padding:2px 6px;border-radius:4px;font-size:14px;color:var(--cyan)">$1</code>');
+
   const ltrs = ['A','B','C','D'];
-  document.getElementById('qOpts').innerHTML = q.opts.map((o,i) =>
+  document.getElementById('qOpts').innerHTML = (q.opts || []).map((o, i) =>
     `<div class="q-opt" onclick="pickAns(this,${i})">
       <div class="q-opt-ltr">${ltrs[i]}</div>
-      ${o.replace(/`([^`]+)`/g,'<code>$1</code>')}
+      ${String(o).replace(/`([^`]+)`/g,'<code style="font-family:var(--mono);background:rgba(255,255,255,.07);padding:1px 5px;border-radius:3px">$1</code>')}
     </div>`).join('');
 
   clearInterval(quizState.timer);
-  quizState.timerVal = selectedDiff==='Easy'?45:selectedDiff==='Medium'?35:25;
+  quizState.timerVal = selectedDiff === 'Easy' ? 45 : selectedDiff === 'Medium' ? 35 : 25;
   document.getElementById('qTimer').textContent = `⏱ ${quizState.timerVal}s`;
   quizState.timer = setInterval(() => {
     quizState.timerVal--;
     document.getElementById('qTimer').textContent = `⏱ ${quizState.timerVal}s`;
-    if(quizState.timerVal<=0){ clearInterval(quizState.timer); if(!quizState.answered) timeUp(); }
+    if (quizState.timerVal <= 0) { clearInterval(quizState.timer); if (!quizState.answered) timeUp(); }
   }, 1000);
 }
 
+let wrongTopicsList = [];
 function pickAns(el, idx) {
-  if(quizState.answered) return;
+  if (quizState.answered) return;
   quizState.answered = true;
   clearInterval(quizState.timer);
-  const correct = shuffledQ[quizState.q].c;
-  const exp = shuffledQ[quizState.q].exp;
-  document.querySelectorAll('.q-opt').forEach((o,i) => {
-    if(i===correct) o.classList.add('correct');
-    else if(i===idx && i!==correct) o.classList.add('wrong');
+  const correct = generatedQ[quizState.q].c;
+  const exp     = generatedQ[quizState.q].exp || '';
+  document.querySelectorAll('.q-opt').forEach((o, i) => {
+    if (i === correct) o.classList.add('correct');
+    else if (i === idx && i !== correct) o.classList.add('wrong');
   });
-  if(idx===correct){ quizState.score++; document.getElementById('qFb').innerHTML = `<span style="color:var(--green)">✓ Correct! ${exp}</span>`; }
-  else document.getElementById('qFb').innerHTML = `<span style="color:var(--red)">✗ Wrong. ${exp}</span>`;
+  if (idx === correct) {
+    quizState.score++;
+    document.getElementById('qFb').innerHTML = `<span style="color:var(--green)">✓ Correct! ${exp}</span>`;
+  } else {
+    wrongTopicsList.push(generatedQ[quizState.q].q.slice(0, 40));
+    document.getElementById('qFb').innerHTML = `<span style="color:var(--red)">✗ Wrong. ${exp}</span>`;
+  }
   document.getElementById('btnNext').disabled = false;
 }
 
 function timeUp() {
   quizState.answered = true;
-  const correct = shuffledQ[quizState.q].c;
+  const correct = generatedQ[quizState.q].c;
   document.querySelectorAll('.q-opt')[correct]?.classList.add('correct');
-  document.getElementById('qFb').innerHTML = `<span style="color:var(--yellow)">⏱ Time's up! Correct: ${shuffledQ[quizState.q].opts[correct]}</span>`;
+  wrongTopicsList.push(generatedQ[quizState.q].q.slice(0, 40));
+  document.getElementById('qFb').innerHTML = `<span style="color:var(--yellow)">⏱ Time's up! Correct: ${generatedQ[quizState.q].opts[correct]}</span>`;
   document.getElementById('btnNext').disabled = false;
 }
 
 function nextQ() {
   quizState.q++;
-  if(quizState.q >= 10) showRes();
+  if (quizState.q >= 10) showQuizResults();
   else renderQ();
 }
 
-function showRes() {
+async function showQuizResults() {
   clearInterval(quizState.timer);
   document.getElementById('quizActive').classList.add('hidden');
   document.getElementById('quizRes').classList.remove('hidden');
-  const pct = Math.round(quizState.score/10*100);
-  const xp = quizState.score * 20;
-  document.getElementById('resPct').textContent = pct+'%';
-  document.getElementById('resRing').style.setProperty('--sdeg', (pct*3.6)+'deg');
-  document.getElementById('resC').textContent = quizState.score;
-  document.getElementById('resW').textContent = 10-quizState.score;
-  document.getElementById('resXP').textContent = '+'+xp;
-  const msgs = [[80,'Outstanding! 🏆','Top-tier performance. Keep going!'],
-                [60,'Good Work! 👍','Review the topics you missed.'],
-                [0,'Keep Practicing! 💪','Every attempt builds knowledge.']];
-  for(const [min,title,msg] of msgs){
-    if(pct>=min){ document.getElementById('resTitle').textContent=title; document.getElementById('resMsg').textContent=msg; break; }
+
+  const pct = Math.round(quizState.score / 10 * 100);
+  const xp  = quizState.score * 20;
+  document.getElementById('resPct').textContent = pct + '%';
+  document.getElementById('resRing').style.setProperty('--sdeg', (pct * 3.6) + 'deg');
+  document.getElementById('resC').textContent   = quizState.score;
+  document.getElementById('resW').textContent   = 10 - quizState.score;
+  document.getElementById('resXP').textContent  = '+' + xp;
+
+  const msgs = [
+    [80, 'Outstanding! 🏆', 'Top-tier performance. Push to the next difficulty!'],
+    [60, 'Good Work! 👍',   'Solid effort. Review the incorrect answers.'],
+    [0,  'Keep Going! 💪',  'Every attempt builds knowledge. Try again!'],
+  ];
+  for (const [min, title, msg] of msgs) {
+    if (pct >= min) {
+      document.getElementById('resTitle').textContent = title;
+      document.getElementById('resMsg').textContent   = msg;
+      break;
+    }
   }
-  // Save to user data
-  const users = JSON.parse(localStorage.getItem('enginex_users')||'{}');
-  if(users[currentUser.email]) {
-    users[currentUser.email].data.tests++;
-    users[currentUser.email].data.xp += xp;
-    const scores = users[currentUser.email].data.activity;
-    const subj = SUBJECTS.find(s=>s.id===quizState.subj);
-    scores.unshift({subj:`${subj.nm} Mock Test`,score:pct,date:'Just now',type:'Test'});
+
+  // AI insight block
+  document.getElementById('resMsg').insertAdjacentHTML('afterend',
+    `<div id="aiInsight" style="margin-top:14px;padding:14px;background:rgba(189,147,249,.07);border:1px solid rgba(189,147,249,.2);border-radius:10px;font-size:13px;color:var(--muted2);text-align:left">
+      <div class="typing-dots" style="display:flex"><span></span><span></span><span></span></div>
+    </div>`);
+
+  // Persist real data
+  const users = JSON.parse(localStorage.getItem('enginex_users') || '{}');
+  if (users[currentUser.email]) {
+    const ud = users[currentUser.email].data;
+    ud.tests  = (ud.tests  || 0) + 1;
+    ud.xp     = (ud.xp     || 0) + xp;
+    // Rolling average score
+    const prevTotal = (ud.avgScore || 0) * (ud.tests - 1);
+    ud.avgScore = Math.round((prevTotal + pct) / ud.tests);
+    // Subject score history
+    if (!ud.subjectScores) ud.subjectScores = {};
+    if (!ud.subjectScores[quizState.subj]) ud.subjectScores[quizState.subj] = [];
+    ud.subjectScores[quizState.subj].push(pct);
+    if (ud.subjectScores[quizState.subj].length > 20) ud.subjectScores[quizState.subj].shift();
+    // Activity log
+    const subj = SUBJECTS.find(s => s.id === quizState.subj);
+    ud.activity.unshift({
+      subj:  `${subj.nm} Mock Test (${selectedDiff})`,
+      score: pct,
+      date:  'Just now',
+      type:  'Test',
+    });
+    if (ud.activity.length > 20) ud.activity.pop();
+    // Weekly minutes (approximate current day index)
+    const dayIdx = new Date().getDay(); // 0=Sun,1=Mon…
+    const mapped = [6,0,1,2,3,4,5][dayIdx]; // map to Mon=0
+    ud.weeklyMins = ud.weeklyMins || [0,0,0,0,0,0,0];
+    ud.weeklyMins[mapped] = (ud.weeklyMins[mapped] || 0) + 10;
     localStorage.setItem('enginex_users', JSON.stringify(users));
+    currentUser = users[currentUser.email];
+    appData = { tests:ud.tests, xp:ud.xp, avgScore:ud.avgScore, streak:ud.streak||1 };
+    // refresh sidebar XP
+    document.getElementById('sbRole').textContent = `Level ${Math.floor(ud.xp/500)+1} · ${currentUser.branch.split(' ')[0]}`;
   }
+
+  // Fetch AI insight
+  const subjNm = SUBJECTS.find(s => s.id === quizState.subj)?.nm || quizState.subj;
+  const insight = await generateQuizInsight(subjNm, quizState.score, wrongTopicsList);
+  const el = document.getElementById('aiInsight');
+  if (el) {
+    el.innerHTML = insight
+      ? `<strong style="color:var(--purple)">✦ AI Insight</strong><br>${insight.replace(/\n/g,'<br>')}`
+      : `<span style="color:var(--muted)">Add your API key for personalised AI feedback after each quiz.</span>`;
+  }
+  wrongTopicsList = [];
 }
 
 function resetQuiz() {
   document.getElementById('quizRes').classList.add('hidden');
   document.getElementById('quizPick').classList.remove('hidden');
+  const insight = document.getElementById('aiInsight');
+  if (insight) insight.remove();
+  renderQuizPicker();
+  refreshDashboard();
 }
 
 // ══════════════════════════════════════════ ROADMAP
@@ -1526,31 +1718,28 @@ let activeRoadmapLang = 'python';
 
 function initRoadmap() {
   const ids = Object.keys(ROADMAPS);
-  document.getElementById('langTabs').innerHTML = ids.map(id => `
-    <button class="lang-tab ${id===activeRoadmapLang?'active':''}" onclick="switchRoadmap('${id}',this)">${ROADMAPS[id].label}</button>
-  `).join('') + SUBJECTS.filter(s=>!ids.includes(s.id)).map(s=>
-    `<button class="lang-tab" style="opacity:.5">${s.ico} ${s.nm}</button>`).join('');
+  document.getElementById('langTabs').innerHTML =
+    ids.map(id => `<button class="lang-tab ${id === activeRoadmapLang ? 'active':''}" onclick="switchRoadmap('${id}',this)">${ROADMAPS[id].label}</button>`).join('') +
+    SUBJECTS.filter(s => !ids.includes(s.id)).map(s => `<button class="lang-tab" style="opacity:.4">${s.ico} ${s.nm}</button>`).join('');
   renderRoadmap();
 }
-
 function switchRoadmap(id, btn) {
   activeRoadmapLang = id;
-  document.querySelectorAll('.lang-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.lang-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderRoadmap();
 }
-
 function renderRoadmap() {
   const rm = ROADMAPS[activeRoadmapLang];
-  if(!rm) { document.getElementById('roadmapContent').innerHTML = '<div style="color:var(--muted2);text-align:center;padding:40px">Roadmap coming soon! 🚧</div>'; return; }
-  let html = `<div class="roadmap-track">`;
+  if (!rm) { document.getElementById('roadmapContent').innerHTML = '<div style="color:var(--muted2);text-align:center;padding:40px">Roadmap coming soon! 🚧</div>'; return; }
+  let html = '<div class="roadmap-track">';
   rm.phases.forEach((p, i) => {
-    const dotCls = p.done ? 'done' : '';
     html += `<div class="rm-phase" style="position:relative">
-      <div class="rm-dot ${dotCls}" style="${p.done?`background:${rm.color};border-color:${rm.color}`:p.active?`border-color:${rm.color};color:${rm.color}`:''}">${i+1}</div>
+      <div class="rm-dot ${p.done?'done':''}" style="${p.done?`background:${rm.color};border-color:${rm.color}`:p.active?`border-color:${rm.color};color:${rm.color}`:''}"> ${i+1}</div>
       <div class="rm-header">
         <div class="rm-phase-title">${p.n}</div>
-        ${p.done?`<span class="lang-pill" style="background:rgba(57,255,144,.08);border-color:rgba(57,255,144,.2);color:var(--green);font-size:10px">✓ Done</span>`:p.active?`<span class="lang-pill" style="background:rgba(0,229,255,.08);border-color:rgba(0,229,255,.2);color:var(--cyan);font-size:10px">In Progress</span>`:''}
+        ${p.done ? `<span class="lang-pill" style="background:rgba(57,255,144,.08);border-color:rgba(57,255,144,.2);color:var(--green);font-size:10px">✓ Done</span>` :
+          p.active ? `<span class="lang-pill" style="background:rgba(0,229,255,.08);border-color:rgba(0,229,255,.2);color:var(--cyan);font-size:10px">In Progress</span>` : ''}
       </div>
       <div class="rm-topics">
         ${p.topics.map(t => `<span class="rm-topic ${p.done?'done-t':p.active?'active-t':'locked-t'}">${t}</span>`).join('')}
@@ -1561,31 +1750,44 @@ function renderRoadmap() {
   document.getElementById('roadmapContent').innerHTML = html;
 }
 
-// ══════════════════════════════════════════ PROGRESS
+// ══════════════════════════════════════════ PROGRESS  (real data)
 function initProgress() {
-  const hrs = [30,65,45,80,55,70,35];
-  document.getElementById('weekChart').innerHTML = hrs.map((h,i) =>
+  const d = currentUser.data;
+
+  // Weekly minutes bar chart (real data)
+  const wm = (d.weeklyMins || [0,0,0,0,0,0,0]);
+  const maxMin = Math.max(...wm, 1);
+  const todayIdx = [6,0,1,2,3,4,5][new Date().getDay()]; // Mon=0
+  document.getElementById('weekChart').innerHTML = wm.map((m, i) =>
     `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
-      <div style="font-family:var(--mono);font-size:9px;color:var(--muted2)">${h}m</div>
-      <div style="width:100%;height:${h}%;background:${i===2?'var(--cyan)':'rgba(0,229,255,.15)'};border-radius:3px;transition:height .5s"></div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--muted2)">${m}m</div>
+      <div style="width:100%;height:${Math.max((m/maxMin)*100,4)}%;background:${i===todayIdx?'var(--cyan)':'rgba(0,229,255,.15)'};border-radius:3px;transition:height .5s"></div>
     </div>`).join('');
 
-  const hist = [{s:'DSA Mock Test',sc:88,d:'Today'},{s:'Python Functions',sc:76,d:'Yesterday'},{s:'DBMS SQL Joins',sc:68,d:'2 days ago'},{s:'OS - Scheduling',sc:92,d:'3 days ago'}];
-  document.getElementById('scoreHist').innerHTML = hist.map(h => {
-    const c = h.sc>=80?'var(--green)':h.sc>=60?'var(--yellow)':'var(--red)';
-    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px;background:rgba(255,255,255,.02);border-radius:8px;margin-bottom:7px">
-      <div><div style="font-size:13px;font-weight:600">${h.s}</div><div style="font-family:var(--mono);font-size:10px;color:var(--muted)">${h.d}</div></div>
-      <div style="font-family:var(--mono);font-size:15px;font-weight:700;color:${c}">${h.sc}%</div>
-    </div>`;
-  }).join('');
+  // Score history from real activity
+  const testActs = (d.activity || []).filter(a => a.type === 'Test').slice(0, 6);
+  if (testActs.length === 0) {
+    document.getElementById('scoreHist').innerHTML = `<div style="color:var(--muted2);font-size:13px;text-align:center;padding:20px">No tests completed yet. Take a Mock Test! ⚡</div>`;
+  } else {
+    document.getElementById('scoreHist').innerHTML = testActs.map(h => {
+      const c = h.score >= 80 ? 'var(--green)' : h.score >= 60 ? 'var(--yellow)' : 'var(--red)';
+      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px;background:rgba(255,255,255,.02);border-radius:8px;margin-bottom:7px">
+        <div><div style="font-size:13px;font-weight:600">${h.subj}</div><div style="font-family:var(--mono);font-size:10px;color:var(--muted)">${h.date}</div></div>
+        <div style="font-family:var(--mono);font-size:15px;font-weight:700;color:${c}">${h.score}%</div>
+      </div>`;
+    }).join('');
+  }
 
-  const pcts={python:75,javascript:58,java:45,cpp:38,dsa:82,dbms:60,os:50,cn:42};
+  // Subject progress from real scores
+  const ss = d.subjectScores || {};
   document.getElementById('detailProg').innerHTML = SUBJECTS.map(s => {
-    const p = pcts[s.id]||50;
+    const arr = ss[s.id] || [];
+    const p   = arr.length ? avg(arr) : 0;
+    const cnt = arr.length ? `(${arr.length} test${arr.length>1?'s':''})` : 'No tests yet';
     return `<div style="margin-bottom:14px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
-        <div style="display:flex;align-items:center;gap:8px"><span>${s.ico}</span><span style="font-size:13px;font-weight:600">${s.nm}</span></div>
-        <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:${s.color}">${p}%</span>
+        <div style="display:flex;align-items:center;gap:8px"><span>${s.ico}</span><span style="font-size:13px;font-weight:600">${s.nm}</span><span style="font-family:var(--mono);font-size:10px;color:var(--muted2)">${cnt}</span></div>
+        <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:${arr.length?s.color:'var(--muted)'}">${arr.length?p+'%':'—'}</span>
       </div>
       <div style="height:7px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden">
         <div style="width:${p}%;height:100%;background:${s.color};border-radius:4px;transition:width 1s ease"></div>
@@ -1594,51 +1796,71 @@ function initProgress() {
   }).join('');
 }
 
-// ══════════════════════════════════════════ LEADERBOARD
+// ══════════════════════════════════════════ LEADERBOARD  (user XP is real)
 function initLeaderboard() {
-  const leaders = [
-    {n:'Priya Menon',i:'P',xp:7840,streak:28,branch:'CSE',g:'135deg,#ff6eb4,var(--purple)'},
-    {n:'Rahul Verma',i:'R',xp:7210,streak:21,branch:'IT',g:'135deg,#fbbf24,var(--orange)'},
-    {n:'Aditya Nair',i:'A',xp:5600,streak:15,branch:'CSE',g:'135deg,var(--cyan),#7dcfff'},
-    {n:currentUser?.fname+' '+(currentUser?.lname||''),i:(currentUser?.fname||'Y')[0],xp:appData.xp,streak:appData.streak,branch:currentUser?.branch?.split(' ')[0]||'CSE',isMe:true,g:'135deg,var(--cyan),var(--purple)'},
-    {n:'Sneha Iyer',i:'S',xp:4200,streak:9,branch:'DS',g:'135deg,var(--green),var(--cyan)'},
-    {n:'Vikram Shah',i:'V',xp:3900,streak:6,branch:'IT',g:'135deg,var(--orange),var(--red)'},
-    {n:'Neha Krishnan',i:'N',xp:3500,streak:4,branch:'ECE',g:'135deg,var(--purple),var(--pink)'},
+  const myXP = appData.xp;
+  // Static peers — user's real XP is inserted in their slot
+  const peers = [
+    {n:'Priya Menon',    i:'P', xp:7840, streak:28, branch:'CSE', g:'135deg,#ff6eb4,var(--purple)'},
+    {n:'Rahul Verma',    i:'R', xp:7210, streak:21, branch:'IT',  g:'135deg,#fbbf24,var(--orange)'},
+    {n:'Aditya Nair',    i:'A', xp:5600, streak:15, branch:'CSE', g:'135deg,var(--cyan),#7dcfff'},
+    {n:'Sneha Iyer',     i:'S', xp:4200, streak:9,  branch:'DS',  g:'135deg,var(--green),var(--cyan)'},
+    {n:'Vikram Shah',    i:'V', xp:3900, streak:6,  branch:'IT',  g:'135deg,var(--orange),var(--red)'},
+    {n:'Neha Krishnan',  i:'N', xp:3500, streak:4,  branch:'ECE', g:'135deg,var(--purple),var(--pink)'},
   ];
+  const me = {
+    n: `${currentUser?.fname || 'You'} ${currentUser?.lname || ''}`,
+    i: (currentUser?.fname || 'Y')[0],
+    xp: myXP, streak: appData.streak,
+    branch: currentUser?.branch?.split(' ')[0] || 'CSE',
+    isMe: true, g: '135deg,var(--cyan),var(--purple)',
+  };
+  const all = [...peers, me].sort((a, b) => b.xp - a.xp);
+  const myRank = all.findIndex(l => l.isMe) + 1;
   const medals = ['🥇','🥈','🥉'];
-  document.getElementById('leaderList').innerHTML = leaders.map((l,i) => `
+  document.getElementById('leaderList').innerHTML = all.map((l, i) => `
     <div style="display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;margin-bottom:3px;
-    background:${l.isMe?'rgba(0,229,255,.05)':'transparent'};border:${l.isMe?'1px solid rgba(0,229,255,.15)':'1px solid transparent'};transition:background .15s;">
+    background:${l.isMe?'rgba(0,229,255,.05)':'transparent'};border:${l.isMe?'1px solid rgba(0,229,255,.15)':'1px solid transparent'}">
       <div style="width:26px;text-align:center;font-family:var(--mono);font-size:${i<3?'16':'12'}px;font-weight:700;
       color:${i===0?'var(--yellow)':i===1?'#c0c0c0':i===2?'#cd7f32':'var(--muted2)'}">
-        ${i<3?medals[i]:'#'+(i+1)}</div>
-      <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(${l.g});
-      display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--bg);flex-shrink:0">${l.i}</div>
+        ${i < 3 ? medals[i] : '#'+(i+1)}</div>
+      <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(${l.g});display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--bg);flex-shrink:0">${l.i}</div>
       <div style="flex:1"><div style="font-size:13px;font-weight:600">${l.n}${l.isMe?' (You)':''}</div>
       <div style="font-family:var(--mono);font-size:10px;color:var(--muted2)">${l.branch} · 🔥${l.streak}</div></div>
       <div style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--cyan)">${l.xp.toLocaleString()} XP</div>
     </div>`).join('');
+
+  document.getElementById('lbStreak').textContent = appData.streak;
+  document.getElementById('lbXP').textContent     = myXP.toLocaleString();
+
+  // Update rank display
+  const rankEl = document.querySelector('#panel-leaderboard .sec-card:last-child');
+  if (rankEl) {
+    const rankNum = rankEl.querySelector('div[style*="52px"]');
+    if (rankNum) rankNum.textContent = '#' + myRank;
+    const xpNeeded = myRank > 1 ? all[myRank-2].xp - myXP : 0;
+    const xpNeedEl = rankEl.querySelector('[style*="var(--yellow)"]');
+    if (xpNeedEl) xpNeedEl.textContent = xpNeeded > 0 ? `+${xpNeeded} XP` : 'You\'re #1! 🏆';
+  }
 }
 
 // ══════════════════════════════════════════ TOAST
-function toast(msg, type='success') {
+function toast(msg, type = 'success') {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.className = `toast ${type} show`;
-  setTimeout(() => t.classList.remove('show'), 3000);
+  t.textContent = msg;
+  t.className   = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3200);
 }
 
-// ══════════════════════════════════════════ AUTO LOGIN
-(function autoLogin(){
+// ══════════════════════════════════════════ AUTO-LOGIN
+(function autoLogin() {
   const saved = localStorage.getItem('enginex_session');
-  if(saved){
-    const users = JSON.parse(localStorage.getItem('enginex_users')||'{}');
-    if(users[saved]){
-      setTimeout(()=>launchApp(users[saved]), 100);
-    }
+  if (saved) {
+    const users = JSON.parse(localStorage.getItem('enginex_users') || '{}');
+    if (users[saved]) { setTimeout(() => launchApp(users[saved]), 100); return; }
   }
-  // Pre-fill API key if saved
   const k = localStorage.getItem('enginex_apikey');
-  if(k) document.getElementById('apiKeyInput').value = k;
+  if (k) document.getElementById('apiKeyInput').value = k;
 })();
 </script>
 </body>
